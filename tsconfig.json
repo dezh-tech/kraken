@@ -16,7 +16,7 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedParameters": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "target": "ES2022",
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
@@ -25,48 +25,7 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
-  }
-  ,
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
+    "paths": {}
+  },
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }
-
-
-// {
-//   "compilerOptions": {
-//     "module": "commonjs",
-//     "declaration": false,
-//     "noImplicitAny": true,
-//     "removeComments": true,
-//     "noLib": false,
-//     "skipLibCheck": true,
-//     "importHelpers": true,
-//     "allowSyntheticDefaultImports": true,
-//     "emitDecoratorMetadata": true,
-//     "experimentalDecorators": true,
-//     "resolveJsonModule": true,
-//     "esModuleInterop": true,
-//     "allowUnreachableCode": false,
-//     "noImplicitReturns": true,
-//     "noImplicitThis": true,
-//     "noUnusedParameters": true,
-//     "noUnusedLocals": true,
-//     "target": "ES2022",
-//     "noFallthroughCasesInSwitch": true,
-//     "sourceMap": true,
-//     "noEmitHelpers": true,
-//     "noUncheckedIndexedAccess": true,
-//     "outDir": "./dist",
-//     "baseUrl": "./src",
-//     "incremental": true,
-//   },
-//   "include": [
-//     "src/**/*"
-//   ],
-//   "exclude": [
-//     "node_modules",
-//     "**/*.spec.ts"
-//   ]
-// }

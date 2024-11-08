@@ -53,13 +53,13 @@ export class ApiConfigService {
     return this.getBoolean('ENABLE_DOCUMENTATION');
   }
 
-  // get authConfig() {
-  //   return {
-  //     privateKey: this.getString('JWT_PRIVATE_KEY'),
-  //     publicKey: this.getString('JWT_PUBLIC_KEY'),
-  //     jwtExpirationTime: this.getNumber('JWT_EXPIRATION_TIME'),
-  //   };
-  // }
+  get authConfig() {
+    return {
+      privateKey: this.getString('JWT_PRIVATE_KEY'),
+      publicKey: this.getString('JWT_PUBLIC_KEY'),
+      jwtExpirationTime: this.getNumber('JWT_EXPIRATION_TIME'),
+    };
+  }
 
   get mongoConfig(): MongooseModuleFactoryOptions {
     return {
