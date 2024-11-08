@@ -16,7 +16,7 @@ import LocalStrategy from './strategies/local.strategy';
     JwtModule.registerAsync({
       inject: [ApiConfigService],
       useFactory: (configService: ApiConfigService) => ({
-        secretOrPrivateKey: configService.authConfig.privateKey,
+        secret: configService.authConfig.secret,
       }),
     }),
   ],
