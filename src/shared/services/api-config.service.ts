@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MongooseModuleFactoryOptions } from '@nestjs/mongoose';
+import type { MongooseModuleFactoryOptions } from '@nestjs/mongoose';
 import { isNil } from 'lodash';
 
 @Injectable()

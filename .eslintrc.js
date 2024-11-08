@@ -1,7 +1,6 @@
 const rules = {
     'n/no-extraneous-import': 'off',
     'n/no-missing-import': 'off',
-    'canonical/filename-match-exported': 'error',
     // 'canonical/no-unused-exports': ['error', {tsConfigPath: './tsconfig.eslint.json'}],
     // 'canonical/id-match': [
     //   'error',

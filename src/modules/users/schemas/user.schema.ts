@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, ObjectId } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+import type { HydratedDocument } from 'mongoose';
+import { ObjectId } from 'mongoose';
 
 @Schema()
 export class User {
@@ -18,4 +19,4 @@ export class User {
 
 export type UserDocument = HydratedDocument<User>;
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const userSchema = SchemaFactory.createForClass(User);

@@ -1,11 +1,12 @@
-import * as bcrypt from 'bcrypt';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../users/user.service';
-import { IAuthValidateUserOutput } from './interfaces/IAuthValidateUserOutput.interface';
+import * as bcrypt from 'bcrypt';
+
 import { ApiConfigService } from '../../shared/services/api-config.service';
-import { IAuthLoginInput } from './interfaces/IAuthLoginInput.interface';
-import { IAuthLoginOutput } from './interfaces/IAuthLoginOutput.interface';
+import { UserService } from '../users/user.service';
+import type { IAuthLoginInput } from './interfaces/auth-login-input.interface';
+import type { IAuthLoginOutput } from './interfaces/auth-login-output.interface';
+import type { IAuthValidateUserOutput } from './interfaces/auth-validate-user-output.interface';
 
 @Injectable()
 export default class AuthService {
@@ -22,9 +23,9 @@ export default class AuthService {
       return null;
     }
 
-    const passwordCompared = await bcrypt.compare(password, user.password);
+    const isPasswordOk = await bcrypt.compare(password, user.password);
 
-    if (passwordCompared) {
+    if (isPasswordOk) {
       return {
         id: user._id,
         email: user.email,
@@ -34,7 +35,7 @@ export default class AuthService {
     return null;
   }
 
-  async login(data: IAuthLoginInput): Promise<IAuthLoginOutput> {
+  login(data: IAuthLoginInput): IAuthLoginOutput {
     const payload = {
       id: data._id,
       email: data.email,
