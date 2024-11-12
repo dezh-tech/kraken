@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package immortal;
+
+import "google/protobuf/any.proto";
+
+service ImmortalService {
+  // Retrieves a configuration by name.
+  rpc GetConfig (EmptyRequest) returns (Parameters) {}
+
+  // Updates or creates a configuration.
+  rpc SetConfig (Parameters) returns (ConfigResponse) {}
+}
+
+message EmptyRequest {}  // Empty request message for GetConfig
+
+message ConfigResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message Retention {
+  int32 time = 1;
+  int32 count = 2;
+  google.protobuf.Any kinds = 3;
+}
+
+message Subscription {
+  int32 amount = 1;
+  string unit = 2;
+  int32 period = 3;
+}
+
+message Admission {
+  int32 amount = 1;
+  string unit = 2;
+}
+
+message Publication {
+  repeated int32 kinds = 1;
+  int32 amount = 2;
+  string unit = 3;
+}
+
+message Fees {
+  repeated Subscription subscription = 1;
+  repeated Publication publication = 2;
+  repeated Admission admission = 3;
+}
+
+message Parameters {
+  Retention retention = 1;
+  Fees fees = 2;
+  string name = 3;
+  string description = 4;
+  string pubkey = 5;
+  string contact = 6;
+  string software = 7;
+  repeated int32 supported_nips = 8;
+  string version = 9;
+  repeated string relay_countries = 10;
+  repeated string language_tags = 11;
+  repeated string tags = 12;
+  string posting_policy = 13;
+  string payments_url = 14;
+  string icon = 15;
+  string url = 16;
+}

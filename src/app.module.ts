@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import AuthModule from './modules/auth/auth.module';
 import HealthModule from './modules/health/health.module';
+import ServiceRegistryModule from './modules/service-registry/service-registry.module';
 import { UserModule } from './modules/users/user.module';
 import { SharedModule } from './shared/shared.module';
 
@@ -15,6 +16,7 @@ import { SharedModule } from './shared/shared.module';
     SharedModule,
     UserModule,
     HealthModule,
+    ServiceRegistryModule,
   ],
   controllers: [],
   providers: [],

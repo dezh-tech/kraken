@@ -1,3 +1,5 @@
+import { join } from 'node:path';
+
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { MongooseModuleFactoryOptions } from '@nestjs/mongoose';
@@ -71,6 +73,13 @@ export class ApiConfigService {
   get appConfig() {
     return {
       port: this.getString('PORT'),
+    };
+  }
+
+  get grpcConfig() {
+    return {
+      port: this.getString('GRPC_PORT'),
+      protoPath: join(__dirname, '..', '..', 'proto'),
     };
   }
 

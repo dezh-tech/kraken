@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package kraken;
+
+service KrakenService {
+  rpc registerService (registerServiceRequest) returns (registerServiceResponse) {}
+}
+
+message registerServiceRequest {
+  string  url = 1;
+  uint32 heartbeat_duration_in_sec = 2;
+  ServiceTypeEnum type = 3;
+}
+
+message registerServiceResponse {
+  bool success = 1;
+  optional string message = 2;
+}
+
+enum ServiceTypeEnum {
+  RELAY = 0;
+}

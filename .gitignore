@@ -68,7 +68,6 @@ typings/
 .idea
 *.iml
 out
-gen
 dist
 mongo
 

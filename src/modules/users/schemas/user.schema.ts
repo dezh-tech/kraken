@@ -4,7 +4,7 @@ import type { HydratedDocument } from 'mongoose';
 import { ObjectId } from 'mongoose';
 
 @Schema()
-export class User {
+export class UserSchema {
   @ApiProperty({ type: String })
   _id: ObjectId;
 
@@ -17,6 +17,6 @@ export class User {
   password: string;
 }
 
-export type UserDocument = HydratedDocument<User>;
+export type UserDocument = HydratedDocument<UserSchema>;
 
-export const userSchema = SchemaFactory.createForClass(User);
+export const userSchema = SchemaFactory.createForClass(UserSchema);

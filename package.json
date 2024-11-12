@@ -20,13 +20,18 @@
     "test:e2e": "NODE_ENV=test jest --config ./test/jest-e2e.json",
     "docs:dev": "vuepress dev -p 7070",
     "prepare": "husky install",
-    "release": "release-it"
+    "release": "release-it",
+    "proto:win": "protoc --plugin=protoc-gen-ts_proto=.\\node_modules\\.bin\\protoc-gen-ts_proto.cmd   --ts_proto_opt=esModuleInterop=true --ts_proto_opt=nestJs=true --ts_proto_opt=addGrpcMetadata=false -I=./src/modules/grpc/proto src/modules/grpc/proto/*.proto --ts_proto_out=./src/modules/grpc/gen/ts",
+    "proto:linux": "protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto --ts_proto_opt=nestJs=true  --ts_proto_opt=esModuleInterop=true --ts_proto_opt=addGrpcMetadata=true -I=./src/proto src/proto/*.proto --ts_proto_out=./src/proto/ts"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.12.2",
+    "@grpc/proto-loader": "^0.7.13",
     "@nestjs/common": "^10.3.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.3.0",
     "@nestjs/jwt": "^10.2.0",
+    "@nestjs/microservices": "^10.4.7",
     "@nestjs/mongoose": "^10.1.0",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.3.0",
@@ -53,6 +58,7 @@
     "rxjs": "^7.8.1",
     "source-map-support": "^0.5.21",
     "swagger-ui-express": "^5.0.0",
+    "ts-proto": "^2.2.7",
     "tslib": "^2.6.2",
     "uuid": "^9.0.1"
   },
