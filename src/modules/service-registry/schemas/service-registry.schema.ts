@@ -5,27 +5,27 @@ import { ObjectId } from 'mongoose';
 
 import { ServiceStatus } from '../enums/service-status.enum';
 import { ServiceType } from '../enums/service-types.enum';
+import { ServiceRegistryDto } from '../dtos/service-registry.dto';
 
-@Schema()
+@Schema({ collection: 'service_registry' })
 export class ServiceRegistrySchema {
   @ApiProperty({ type: String })
   _id: ObjectId;
 
-  @ApiProperty({ type: String, enum: ServiceType, default: ServiceType.RELAY })
-  @Prop({ required: true })
+  @Prop({ type: String, required: true, default: ServiceType.RELAY })
   type: ServiceType;
 
-  @ApiProperty({ type: String, enum: ServiceStatus, default: ServiceStatus.ACTIVE })
-  @Prop({ required: true })
+  @Prop({ type: String, required: true, default: ServiceStatus.ACTIVE })
   status: ServiceStatus;
 
-  @ApiProperty({ type: String })
-  @Prop()
+  @Prop({ type: String })
   url: string;
 
-  @ApiProperty({ type: Number })
-  @Prop()
+  @Prop({ type: Number, default: 0 })
   heartbeat_duration_in_sec: number;
+
+  @Prop({ type: Number, default: 0 })
+  last_health_check: number;
 }
 
 export type ServiceRegistryDocument = HydratedDocument<ServiceRegistrySchema>;

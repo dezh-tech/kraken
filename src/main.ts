@@ -6,6 +6,7 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import compression from 'compression';
 import morgan from 'morgan';
+import { ReflectionService } from '@grpc/reflection';
 
 import { AppModule } from './app.module';
 import { setupSwagger } from './setup-swagger';
@@ -58,16 +59,18 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
+      onLoadPackageDefinition: (pkg, server) => {
+        new ReflectionService(pkg).addToServer(server);
+      },
       package: 'kraken', // TODO: consider making this dynamic
       protoPath: configService.grpcConfig.protoPath,
-      url: `0.0.0.0:${configService.grpcConfig.port}`,
+      url: `localhost:${configService.grpcConfig.port}`,
     },
   });
 
   // Start server
-  const port = configService.appConfig.port;
   await app.startAllMicroservices();
-  await app.listen(port);
+  await app.listen(configService.appConfig.port);
 
   console.info(`Server is running on ${await app.getUrl()}`);
 }
