@@ -17,7 +17,11 @@ export default class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<null | IAuthValidateUserOutput> {
-    const user = await this.usersService.findOne({ email });
+    const user = await this.usersService.findOne({
+      where: {
+        email,
+      },
+    });
 
     if (!user) {
       return null;
@@ -27,7 +31,7 @@ export default class AuthService {
 
     if (isPasswordOk) {
       return {
-        id: user._id,
+        id: user.id,
         email: user.email,
       };
     }

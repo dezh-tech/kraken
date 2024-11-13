@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail } from 'class-validator';
 
-export class UserDto {
+import { AbstractDto } from '../../../../src/common/dto/abstract.dto';
+
+export class UserDto extends AbstractDto {
   _id: string;
 
   @ApiProperty()

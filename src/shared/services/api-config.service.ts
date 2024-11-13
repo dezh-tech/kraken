@@ -2,7 +2,7 @@ import { join } from 'node:path';
 
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { MongooseModuleFactoryOptions } from '@nestjs/mongoose';
+import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { isNil } from 'lodash';
 
 @Injectable()
@@ -62,24 +62,28 @@ export class ApiConfigService {
     };
   }
 
-  get mongoConfig(): MongooseModuleFactoryOptions {
-    return {
-      uri: this.getString('MONGO_URI'),
-      dbName: this.getString('MONGO_DB_NAME'),
-      connectTimeoutMS: this.getNumber('MONGO_DB_CONNECTION_TIMEOUT_IN_MS'),
-    };
-  }
-
   get appConfig() {
     return {
       port: this.getString('PORT'),
     };
   }
 
+  get mongoConfig(): TypeOrmModuleOptions {
+    return {
+      dropSchema: this.isTest,
+      synchronize: true,
+      type: 'mongodb',
+      name: 'default',
+      url: this.getString('MONGO_URI'),
+      logging: this.getBoolean('ENABLE_ORM_LOGS'),
+      connectTimeoutMS: this.getNumber('MONGO_DB_CONNECTION_TIMEOUT_IN_MS'),
+    };
+  }
+
   get grpcConfig() {
     return {
       port: this.getString('GRPC_PORT'),
-      protoPath: join(__dirname, '..', '..',"modules","grpc","proto","kraken.proto"),
+      protoPath: join(__dirname, '..', '..', 'modules', 'grpc', 'proto', 'kraken.proto'),
     };
   }
 

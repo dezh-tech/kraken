@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import type { UserSchema } from 'src/modules/users/schemas/user.schema';
+import type { UserEntity } from 'src/modules/users/entities/user.entity';
 
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import type { IJwtStrategyValidate } from '../interfaces/jwt-strategy-validate.interface';
@@ -16,9 +16,9 @@ export default class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: UserSchema): IJwtStrategyValidate {
+  validate(payload: UserEntity): IJwtStrategyValidate {
     return {
-      id: payload._id,
+      id: payload.id,
       email: payload.email,
     };
   }

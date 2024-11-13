@@ -1,15 +1,14 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ServiceRegistrySchema, serviceRegistrySchema } from './schemas/service-registry.schema';
 import ServiceRegistryController from './controllers/service-registry.controller';
-import ServiceRegistryService from './service-registry.service';
-import { ServiceRegistryRepository } from './service-registry.repository';
 import ServiceRegistryGrpcController from './controllers/service-regsitry-grpc.controller';
-import { ScheduleModule } from '@nestjs/schedule';
+import { ServiceRegistryEntity } from './entities/service-registry.entity';
+import { ServiceRegistryRepository } from './service-registry.repository';
+import ServiceRegistryService from './service-registry.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: ServiceRegistrySchema.name, schema: serviceRegistrySchema }]),ScheduleModule.forRoot()],
+  imports: [TypeOrmModule.forFeature([ServiceRegistryEntity])],
   controllers: [ServiceRegistryController, ServiceRegistryGrpcController],
   providers: [ServiceRegistryService, ServiceRegistryRepository],
 })

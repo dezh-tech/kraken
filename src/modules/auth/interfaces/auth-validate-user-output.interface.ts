@@ -1,6 +1,4 @@
-import type { ObjectId } from 'mongoose';
-
 export interface IAuthValidateUserOutput {
-  id: ObjectId;
+  id: string;
   email?: string;
 }

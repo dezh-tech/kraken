@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 
+import { AbstractDto } from '../../../common/dto/abstract.dto';
 import { ServiceStatus } from '../enums/service-status.enum';
 import { ServiceType } from '../enums/service-types.enum';
 
-export class ServiceRegistryDto {
+export class ServiceRegistryDto extends AbstractDto {
   _id: string;
 
   @ApiProperty()
@@ -21,5 +22,5 @@ export class ServiceRegistryDto {
 
   @ApiProperty()
   @IsNumber()
-  heartbeat_duration_in_sec: number;
+  heartbeatDurationInSec: number;
 }

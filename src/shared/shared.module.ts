@@ -1,7 +1,7 @@
 import type { Provider } from '@nestjs/common';
 import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiConfigService } from './services/api-config.service';
 
@@ -11,9 +11,10 @@ const providers: Provider[] = [ConfigService, ApiConfigService];
 @Module({
   providers,
   imports: [
-    MongooseModule.forRootAsync({
-      inject: [ApiConfigService],
+    TypeOrmModule.forRootAsync({
+      imports: [SharedModule],
       useFactory: (configService: ApiConfigService) => configService.mongoConfig,
+      inject: [ApiConfigService],
     }),
   ],
   exports: [...providers],
