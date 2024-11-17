@@ -14,7 +14,7 @@ export class AbstractDto {
 
   constructor(entity: AbstractEntity, options?: { excludeFields?: boolean }) {
     if (!options?.excludeFields) {
-      this.id = entity.id;
+      this.id = entity.id.toString();
       this.createdAt = entity.createdAt;
       this.updatedAt = entity.updatedAt;
     }

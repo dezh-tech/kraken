@@ -18,7 +18,7 @@ export default class JwtStrategy extends PassportStrategy(Strategy) {
 
   validate(payload: UserEntity): IJwtStrategyValidate {
     return {
-      id: payload.id,
+      id: payload.id.toString(),
       email: payload.email,
     };
   }

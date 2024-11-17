@@ -51,11 +51,12 @@ export default class ServiceRegistryHealthCheckService implements OnModuleDestro
 
   private async checkServiceHealth(service: ServiceRegistryEntity) {
     try {
-      const isHealthy = false; // TODO: Replace with actual health check logic
+      const isHealthy = false; // TODO: Replace with actual health check logic(grpc health check)
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const status = isHealthy ? ServiceStatus.ACTIVE : ServiceStatus.UN_HEALTHY;
       service.assign({ lastHealthCheck: Date.now(), status });
       await this.serviceRegistryRepository.save(service);
-    } catch (error) {
+    } catch {
       service.assign({ lastHealthCheck: Date.now(), status: ServiceStatus.INACTIVE });
       await this.serviceRegistryRepository.save(service);
     }

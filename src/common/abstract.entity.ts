@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { CreateDateColumn, ObjectId, ObjectIdColumn, UpdateDateColumn } from 'typeorm';
 
 import type { Constructor } from '../types';
 import type { AbstractDto } from './dto/abstract.dto';
@@ -13,7 +13,7 @@ import type { AbstractDto } from './dto/abstract.dto';
  * otherwise just delete and use your own entity.
  */
 export interface IAbstractEntity<DTO extends AbstractDto, O = never> {
-  id: string;
+  id: ObjectId;
   createdAt: Date;
   updatedAt: Date;
 
@@ -23,8 +23,8 @@ export interface IAbstractEntity<DTO extends AbstractDto, O = never> {
 export abstract class AbstractEntity<DTO extends AbstractDto = AbstractDto, O = never>
   implements IAbstractEntity<DTO, O>
 {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @ObjectIdColumn() // MongoDB ObjectId
+  id: ObjectId;
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -69,6 +69,8 @@ export class ApiConfigService {
   }
 
   get mongoConfig(): TypeOrmModuleOptions {
+    const entities = [__dirname + '/../../{shared,modules}/**/entities/*.entity{.ts,.js}'];
+
     return {
       dropSchema: this.isTest,
       synchronize: true,
@@ -77,6 +79,7 @@ export class ApiConfigService {
       url: this.getString('MONGO_URI'),
       logging: this.getBoolean('ENABLE_ORM_LOGS'),
       connectTimeoutMS: this.getNumber('MONGO_DB_CONNECTION_TIMEOUT_IN_MS'),
+      entities,
     };
   }
 

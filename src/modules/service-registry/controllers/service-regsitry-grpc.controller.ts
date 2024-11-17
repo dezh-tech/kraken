@@ -34,6 +34,7 @@ export default class ServiceRegistryGrpcController implements Partial<KrakenServ
 
     return {
       success: true,
+      message: '',
     };
   }
 }

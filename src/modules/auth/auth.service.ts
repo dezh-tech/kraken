@@ -31,7 +31,7 @@ export default class AuthService {
 
     if (isPasswordOk) {
       return {
-        id: user.id,
+        id: user.id.toString(),
         email: user.email,
       };
     }

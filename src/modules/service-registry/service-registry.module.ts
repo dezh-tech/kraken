@@ -6,10 +6,11 @@ import ServiceRegistryGrpcController from './controllers/service-regsitry-grpc.c
 import { ServiceRegistryEntity } from './entities/service-registry.entity';
 import { ServiceRegistryRepository } from './service-registry.repository';
 import ServiceRegistryService from './service-registry.service';
+import ServiceRegistryHealthCheckService from './service-registry-health-check.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ServiceRegistryEntity])],
   controllers: [ServiceRegistryController, ServiceRegistryGrpcController],
-  providers: [ServiceRegistryService, ServiceRegistryRepository],
+  providers: [ServiceRegistryService, ServiceRegistryRepository, ServiceRegistryHealthCheckService],
 })
 export default class ServiceRegistryModule {}
