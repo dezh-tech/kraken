@@ -1,12 +1,9 @@
-import { Order } from '../../constants';
-import {
-  EnumFieldOptional,
-  NumberFieldOptional,
-  StringFieldOptional,
-} from '../../decorators';
+import { Order } from '../../../src/constant/constants';
+import { EnumFieldOptional, NumberFieldOptional, StringFieldOptional } from '../../decorators';
 
 export class PageOptionsDto {
   @EnumFieldOptional(() => Order, {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     default: Order.ASC,
   })
   readonly order: Order = Order.ASC;

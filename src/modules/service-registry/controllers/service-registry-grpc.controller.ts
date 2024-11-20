@@ -1,17 +1,13 @@
 import { Controller } from '@nestjs/common';
 
-import type {
-  KrakenServiceController,
-  registerServiceRequest,
-  registerServiceResponse,
-} from '../../../../src/modules/grpc/gen/ts/kraken';
-import { KrakenServiceControllerMethods, ServiceTypeEnum } from '../../../../src/modules/grpc/gen/ts/kraken';
+import type { registerServiceRequest, registerServiceResponse } from '../../grpc/gen/ts/kraken';
+import { KrakenServiceRegistryServiceControllerMethods, ServiceTypeEnum } from '../../grpc/gen/ts/kraken';
 import { ServiceType } from '../enums/service-types.enum';
-import ServiceRegistryService from '../service-registry.service';
+import ServiceRegistryService from '../services/service-registry.service';
 
-@KrakenServiceControllerMethods()
+@KrakenServiceRegistryServiceControllerMethods()
 @Controller()
-export default class ServiceRegistryGrpcController implements Partial<KrakenServiceController> {
+export class ServiceRegistryGrpcController {
   constructor(private readonly serviceRegistryService: ServiceRegistryService) {}
 
   async registerService({

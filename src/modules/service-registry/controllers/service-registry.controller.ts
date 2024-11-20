@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 
-import ServiceRegistryService from '../service-registry.service';
+import ServiceRegistryService from '../services/service-registry.service';
 
 @Controller('service-registry')
 export default class ServiceRegistryController {

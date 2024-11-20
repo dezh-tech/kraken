@@ -1,3 +1,4 @@
+import { ReflectionService } from '@grpc/reflection';
 import { ClassSerializerInterceptor, HttpStatus, UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import type { MicroserviceOptions } from '@nestjs/microservices';
@@ -6,7 +7,6 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import compression from 'compression';
 import morgan from 'morgan';
-import { ReflectionService } from '@grpc/reflection';
 
 import { AppModule } from './app.module';
 import { setupSwagger } from './setup-swagger';

@@ -2,9 +2,9 @@ import EventEmitter from 'node:events';
 
 import { Injectable } from '@nestjs/common';
 
-import type RegisterServiceRegistry from './dtos/service-registry-register.dto';
-import { ServiceRegistryEntity } from './entities/service-registry.entity';
-import { ServiceRegistryRepository } from './service-registry.repository';
+import type RegisterServiceRegistry from '../dtos/service-registry-register.dto';
+import { ServiceRegistryEntity } from '../entities/service-registry.entity';
+import { ServiceRegistryRepository } from '../service-registry.repository';
 
 @Injectable()
 // eslint-disable-next-line unicorn/prefer-event-target

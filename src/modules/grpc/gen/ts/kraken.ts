@@ -7,14 +7,17 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { Any } from "./google/protobuf/any";
 
 export const protobufPackage = "kraken";
 
+/** Enum definitions */
 export enum ServiceTypeEnum {
   RELAY = 0,
   UNRECOGNIZED = -1,
 }
 
+/** Request and response messages */
 export interface registerServiceRequest {
   url: string;
   heartbeatDurationInSec: number;
@@ -26,31 +29,113 @@ export interface registerServiceResponse {
   message?: string | undefined;
 }
 
+export interface EmptyRequest {
+}
+
+/** Configuration messages */
+export interface getConfigResponse {
+  retention: Retention | undefined;
+  fees: Fees | undefined;
+  name: string;
+  description: string;
+  pubkey: string;
+  contact: string;
+  software: string;
+  supportedNips: number[];
+  version: string;
+  relayCountries: string[];
+  languageTags: string[];
+  tags: string[];
+  postingPolicy: string;
+  paymentsUrl: string;
+  icon: string;
+  url: string;
+}
+
+/** Data structure messages */
+export interface Retention {
+  time: number;
+  count: number;
+  kinds: Any | undefined;
+}
+
+export interface Subscription {
+  amount: number;
+  unit: string;
+  period: number;
+}
+
+export interface Admission {
+  amount: number;
+  unit: string;
+}
+
+export interface Publication {
+  kinds: number[];
+  amount: number;
+  unit: string;
+}
+
+export interface Fees {
+  subscription: Subscription[];
+  publication: Publication[];
+  admission: Admission[];
+}
+
 export const KRAKEN_PACKAGE_NAME = "kraken";
 
-export interface KrakenServiceClient {
+/** Service definition */
+
+export interface KrakenServiceRegistryServiceClient {
   registerService(request: registerServiceRequest): Observable<registerServiceResponse>;
 }
 
-export interface KrakenServiceController {
+/** Service definition */
+
+export interface KrakenServiceRegistryServiceController {
   registerService(
     request: registerServiceRequest,
   ): Promise<registerServiceResponse> | Observable<registerServiceResponse> | registerServiceResponse;
 }
 
-export function KrakenServiceControllerMethods() {
+export function KrakenServiceRegistryServiceControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = ["registerService"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("KrakenService", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod("KrakenServiceRegistryService", method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("KrakenService", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod("KrakenServiceRegistryService", method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const KRAKEN_SERVICE_NAME = "KrakenService";
+export const KRAKEN_SERVICE_REGISTRY_SERVICE_NAME = "KrakenServiceRegistryService";
+
+export interface KrakenConfigServiceClient {
+  getConfig(request: EmptyRequest): Observable<getConfigResponse>;
+}
+
+export interface KrakenConfigServiceController {
+  getConfig(request: EmptyRequest): Promise<getConfigResponse> | Observable<getConfigResponse> | getConfigResponse;
+}
+
+export function KrakenConfigServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["getConfig"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("KrakenConfigService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("KrakenConfigService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const KRAKEN_CONFIG_SERVICE_NAME = "KrakenConfigService";

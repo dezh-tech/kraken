@@ -1,9 +1,9 @@
 import type { OnModuleDestroy } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 
-import type { ServiceRegistryEntity } from './entities/service-registry.entity';
-import { ServiceStatus } from './enums/service-status.enum';
-import { ServiceRegistryRepository } from './service-registry.repository';
+import type { ServiceRegistryEntity } from '../entities/service-registry.entity';
+import { ServiceStatus } from '../enums/service-status.enum';
+import { ServiceRegistryRepository } from '../service-registry.repository';
 import ServiceRegistryService from './service-registry.service';
 
 @Injectable()
@@ -46,7 +46,7 @@ export default class ServiceRegistryHealthCheckService implements OnModuleDestro
       void this.checkServiceHealth(service);
     }, service.heartbeatDurationInSec * 1000);
 
-    this.serviceIntervals.set(String(service.id), intervalId);
+    this.serviceIntervals.set(String(service._id), intervalId);
   }
 
   private async checkServiceHealth(service: ServiceRegistryEntity) {
