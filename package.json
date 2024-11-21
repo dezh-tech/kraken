@@ -22,7 +22,7 @@
     "prepare": "husky install",
     "release": "release-it",
     "proto:win": "protoc --plugin=protoc-gen-ts_proto=.\\node_modules\\.bin\\protoc-gen-ts_proto.cmd   --ts_proto_opt=esModuleInterop=true --ts_proto_opt=nestJs=true --ts_proto_opt=addGrpcMetadata=false -I=./src/modules/grpc/proto src/modules/grpc/proto/*.proto --ts_proto_out=./src/modules/grpc/gen/ts",
-    "proto:linux": "protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto --ts_proto_opt=nestJs=true  --ts_proto_opt=esModuleInterop=true --ts_proto_opt=addGrpcMetadata=true -I=./src/proto src/proto/*.proto --ts_proto_out=./src/proto/ts"
+    "proto:linux": "protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto --ts_proto_opt=nestJs=true  --ts_proto_opt=esModuleInterop=true --ts_proto_opt=addGrpcMetadata=false --experimental_allow_proto3_optional -I=./src/modules/grpc/proto src/modules/grpc/proto/*.proto  --ts_proto_out=./src/modules/grpc/gen/ts"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.12.2",
@@ -39,6 +39,7 @@
     "@nestjs/swagger": "^7.1.17",
     "@nestjs/terminus": "^10.2.3",
     "@nestjs/typeorm": "^10.0.2",
+    "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "cache-manager-redis-store": "^3.0.1",
     "class-transformer": "~0.5.1",

@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package kraken;
 
-import "google/protobuf/any.proto";
-
 // Service definition
 service KrakenServiceRegistryService {
   rpc registerService (registerServiceRequest) returns (registerServiceResponse) {}
@@ -51,7 +49,7 @@ message getConfigResponse {
 message Retention {
   int32 time = 1;
   int32 count = 2;
-  google.protobuf.Any kinds = 3;
+  repeated int32 kinds = 3;
 }
 
 message Subscription {

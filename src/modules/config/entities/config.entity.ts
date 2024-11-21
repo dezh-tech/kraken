@@ -2,7 +2,8 @@ import { Column, Entity } from 'typeorm';
 
 import { AbstractEntity } from '../../../../src/common/abstract.entity';
 import { ConfigDto } from '../dto/config.dto';
-import { Retention } from '../dto/retention.dto';
+import { RetentionEntity } from './retention.entity';
+import { FeesEntity } from './fees.entity';
 
 @Entity('config')
 export class ConfigEntity extends AbstractEntity<ConfigDto> {
@@ -51,10 +52,10 @@ export class ConfigEntity extends AbstractEntity<ConfigDto> {
   url: string;
 
   @Column({ type: 'json', nullable: true })
-  retention?: Retention;
+  retention?: RetentionEntity;
 
-  // @Column({ type: 'json', nullable: true })
-  // fees: IFees;
+  @Column({ type: 'json', nullable: true })
+  fees?: FeesEntity;
 
   constructor(item?: Partial<Omit<ConfigEntity, 'id'>>) {
     super();
@@ -84,7 +85,7 @@ export class ConfigEntity extends AbstractEntity<ConfigDto> {
     this.paymentsUrl = item.paymentsUrl ?? this.paymentsUrl;
     this.icon = item.icon ?? this.icon;
     this.url = item.url ?? this.url;
-    // this.retention = item.retention ?? this.retention;
-    // this.fees = item.fees ?? this.fees;
+    this.retention = item.retention ?? this.retention;
+    this.fees = item.fees ?? this.fees;
   }
 }

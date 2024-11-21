@@ -5,7 +5,7 @@ import { ConfigService } from '../config.service';
 import { UpdateConfigDto } from '../dto/update-config.dto';
 
 @Controller('service-config')
-@ApiTags('Service config')
+@ApiTags('Service-config')
 export class ServiceConfigController {
   constructor(private readonly configService: ConfigService) {}
 

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { FindManyOptions, FindOneOptions } from 'typeorm';
-import { Repository } from 'typeorm';
 
 import { ServiceRegistryEntity } from './entities/service-registry.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ServiceRegistryRepository {

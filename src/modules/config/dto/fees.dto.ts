@@ -1,29 +1,39 @@
-export interface ISubscription {
+import { NumberFieldOptional, StringFieldOptional } from '../../../../src/decorators';
+
+export class SubscriptionDto {
+  @NumberFieldOptional()
   amount: number;
 
+  @StringFieldOptional()
   unit: string;
 
+  @NumberFieldOptional()
   period: number;
 }
 
-export interface IPublication {
+export class PublicationDto {
+  @NumberFieldOptional({ each: true, isArray: true })
   kinds: number[];
 
+  @NumberFieldOptional()
   amount: number;
 
+  @StringFieldOptional()
   unit: string;
 }
 
-export interface IAdmission {
+export class AdmissionDto {
+  @NumberFieldOptional()
   amount: number;
 
-  unit: number;
+  @StringFieldOptional()
+  unit: string;
 }
 
-export interface IFees {
-  subscription: ISubscription[];
+export class FeesDto {
+  subscription?: SubscriptionDto[];
 
-  publication: IPublication[];
+  publication?: PublicationDto[];
 
-  admission: IAdmission[];
+  admission?: AdmissionDto[];
 }

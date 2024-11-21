@@ -3,7 +3,8 @@ import { IsArray, IsOptional, IsString } from 'class-validator';
 
 import { AbstractDto } from '../../../common/dto/abstract.dto';
 import type { ConfigEntity } from '../entities/config.entity';
-import { Retention } from './retention.dto';
+import { RetentionDto } from './retention.dto';
+import { FeesDto } from './fees.dto';
 
 export class ConfigDto extends AbstractDto {
   @ApiProperty()
@@ -66,13 +67,13 @@ export class ConfigDto extends AbstractDto {
   @IsString()
   url?: string;
 
-  @ApiProperty({ type: () => Retention, required: false })
+  @ApiProperty({ type: () => RetentionDto, required: false })
   @IsOptional()
-  retention?: Retention;
+  retention?: RetentionDto;
 
-  // @ApiProperty({ type: () => FeesClass, required: false })
-  // @IsOptional()
-  // fees?: FeesClass;
+  @ApiProperty({ type: () => FeesDto, required: false })
+  @IsOptional()
+  fees?: FeesDto;
 
   constructor(e: ConfigEntity) {
     super(e);
@@ -96,6 +97,27 @@ export class ConfigDto extends AbstractDto {
       kinds: e.retention?.kinds,
       time: e.retention?.time,
     };
-    // this.fees = e.fees;
+    this.fees = {
+      admission: e.fees?.admission?.map((a) => {
+        return {
+          amount: a.amount,
+          unit: a.unit,
+        };
+      }),
+      publication: e.fees?.publication?.map((p) => {
+        return {
+          amount: p.amount,
+          kinds: p.kinds,
+          unit: p.unit,
+        };
+      }),
+      subscription: e.fees?.subscription?.map((s) => {
+        return {
+          amount: s.amount,
+          period: s.period,
+          unit: s.unit,
+        };
+      }),
+    };
   }
 }

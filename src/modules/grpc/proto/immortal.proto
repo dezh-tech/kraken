@@ -2,17 +2,16 @@ syntax = "proto3";
 
 package immortal;
 
-import "google/protobuf/any.proto";
-
 service ImmortalService {
   // Retrieves a configuration by name.
   rpc GetConfig (EmptyRequest) returns (Parameters) {}
 
   // Updates or creates a configuration.
   rpc SetConfig (Parameters) returns (ConfigResponse) {}
+  rpc addWhiteList (Parameters) returns (ConfigResponse) {}
 }
 
-message EmptyRequest {}  // Empty request message for GetConfig
+message EmptyRequest {}
 
 message ConfigResponse {
   bool success = 1;
@@ -22,7 +21,7 @@ message ConfigResponse {
 message Retention {
   int32 time = 1;
   int32 count = 2;
-  google.protobuf.Any kinds = 3;
+  repeated int32 kinds = 3;
 }
 
 message Subscription {

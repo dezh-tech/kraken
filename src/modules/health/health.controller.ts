@@ -1,10 +1,11 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { HealthCheck, HealthCheckService, MongooseHealthIndicator } from '@nestjs/terminus';
 
 import JwtAuthGuard from '../auth/guards/jwt-auth.guard';
 
 @Controller('health')
+@ApiTags("health")
 export default class HealthController {
   private readonly startTime = Date.now();
 

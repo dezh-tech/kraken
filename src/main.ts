@@ -14,7 +14,10 @@ import { ApiConfigService } from './shared/services/api-config.service';
 import { SharedModule } from './shared/shared.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(), { cors: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(), {
+    cors: true,
+    bodyParser: false,
+  });
   const configService = app.select(SharedModule).get(ApiConfigService);
 
   // Middleware setup

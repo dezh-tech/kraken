@@ -68,6 +68,13 @@ export class ApiConfigService {
     };
   }
 
+  get trySpeedConfig() {
+    return {
+      webhookSecret: this.getString('TRYSPEED_WEBHOOK_SECRET'),
+      apiKey: this.getString('TRYSPEED_API_KEY'),
+    };
+  }
+
   get mongoConfig(): TypeOrmModuleOptions {
     const entities = [__dirname + '/../../{shared,modules}/**/entities/*.entity{.ts,.js}'];
 
