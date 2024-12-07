@@ -29,6 +29,8 @@ export class ServiceRegistryDto extends AbstractDto {
   @IsNumber()
   lastHealthCheck: number;
 
+  token: string;
+
   constructor(e: ServiceRegistryEntity) {
     super(e);
 
@@ -37,5 +39,6 @@ export class ServiceRegistryDto extends AbstractDto {
     this.url = e.url;
     this.heartbeatDurationInSec = e.heartbeatDurationInSec;
     this.lastHealthCheck = e.lastHealthCheck;
+    this.token = e.token;
   }
 }

@@ -21,8 +21,8 @@
     "docs:dev": "vuepress dev -p 7070",
     "prepare": "husky install",
     "release": "release-it",
-    "proto:win": "protoc --plugin=protoc-gen-ts_proto=.\\node_modules\\.bin\\protoc-gen-ts_proto.cmd   --ts_proto_opt=esModuleInterop=true --ts_proto_opt=nestJs=true --ts_proto_opt=addGrpcMetadata=false -I=./src/modules/grpc/proto src/modules/grpc/proto/*.proto --ts_proto_out=./src/modules/grpc/gen/ts",
-    "proto:linux": "protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto --ts_proto_opt=nestJs=true  --ts_proto_opt=esModuleInterop=true --ts_proto_opt=addGrpcMetadata=false --experimental_allow_proto3_optional -I=./src/modules/grpc/proto src/modules/grpc/proto/*.proto  --ts_proto_out=./src/modules/grpc/gen/ts"
+    "proto:win": "protoc --plugin=protoc-gen-ts_proto=.\\node_modules\\.bin\\protoc-gen-ts_proto.cmd   --ts_proto_opt=esModuleInterop=true --ts_proto_opt=nestJs=true --ts_proto_opt=addGrpcMetadata=true -I=./src/modules/grpc/proto src/modules/grpc/proto/*.proto --ts_proto_out=./src/modules/grpc/gen/ts",
+    "proto:linux": "protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto --ts_proto_opt=nestJs=true  --ts_proto_opt=esModuleInterop=true --ts_proto_opt=addGrpcMetadata=true --experimental_allow_proto3_optional -I=./src/modules/grpc/proto src/modules/grpc/proto/*.proto  --ts_proto_out=./src/modules/grpc/gen/ts"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.12.2",

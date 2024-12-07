@@ -32,6 +32,9 @@ export class ServiceRegistryEntity extends AbstractEntity<ServiceRegistryDto> {
   @Column({ type: 'int', default: 0 })
   lastHealthCheck: number;
 
+  @Column({ type: 'varchar' })
+  token: string;
+
   constructor(item?: Partial<ServiceRegistryEntity>) {
     super();
 
@@ -50,5 +53,6 @@ export class ServiceRegistryEntity extends AbstractEntity<ServiceRegistryDto> {
     this.url = item.url ?? this.url;
     this.heartbeatDurationInSec = item.heartbeatDurationInSec ?? this.heartbeatDurationInSec;
     this.lastHealthCheck = item.lastHealthCheck ?? this.lastHealthCheck;
+    this.token = item.token ?? this.token;
   }
 }

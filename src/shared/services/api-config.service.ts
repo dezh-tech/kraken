@@ -97,6 +97,10 @@ export class ApiConfigService {
     };
   }
 
+  get serviceAuthToken() {
+    return this.getString('SERVICE_AUTH_TOKEN');
+  }
+
   private get(key: string): string {
     const value = this.configService.get<string>(key);
 
