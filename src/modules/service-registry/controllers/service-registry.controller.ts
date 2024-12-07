@@ -13,7 +13,7 @@ export default class ServiceRegistryController {
   async getServices() {
     const services = await this.serviceRegistryService.findAll();
 
-    return services.map((s) => s.toDto());
+    return services.toDtos();
   }
 
   async registerService(props: RegisterServiceRegistryDto) {
