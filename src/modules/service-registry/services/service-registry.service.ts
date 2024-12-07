@@ -2,7 +2,7 @@ import EventEmitter from 'node:events';
 
 import { Injectable } from '@nestjs/common';
 
-import type RegisterServiceRegistry from '../dtos/service-registry-register.dto';
+import type RegisterServiceRegistryDto from '../dtos/service-registry-register.dto';
 import { ServiceRegistryEntity } from '../entities/service-registry.entity';
 import { ServiceRegistryRepository } from '../service-registry.repository';
 
@@ -13,7 +13,7 @@ export default class ServiceRegistryService extends EventEmitter {
     super();
   }
 
-  async register(props: RegisterServiceRegistry) {
+  async register(props: RegisterServiceRegistryDto) {
     const ns = new ServiceRegistryEntity();
     ns.assign(props);
     const service = await this.serviceRegistryRepository.save(ns);

@@ -6,10 +6,8 @@ export class AbstractDto {
   @ApiProperty()
   id: string;
 
-  @ApiProperty()
   createdAt: Date;
 
-  @ApiProperty()
   updatedAt: Date;
 
   constructor(entity: AbstractEntity, options?: { excludeFields?: boolean }) {

@@ -65,7 +65,7 @@ async function bootstrap() {
       onLoadPackageDefinition: (pkg, server) => {
         new ReflectionService(pkg).addToServer(server);
       },
-      package: 'kraken', // TODO: consider making this dynamic
+      package: 'kraken',
       protoPath: configService.grpcConfig.protoPath,
       url: `localhost:${configService.grpcConfig.port}`,
     },

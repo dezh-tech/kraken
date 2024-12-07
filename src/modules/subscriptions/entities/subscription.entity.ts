@@ -1,6 +1,7 @@
+import { Column, Entity } from 'typeorm';
+
 import { AbstractEntity } from '../../../../src/common/abstract.entity';
 import { SubscriptionDto } from '../dto/subscription.dto';
-import { Column, Entity } from 'typeorm';
 import { SubscriptionStatus } from '../enums/subscription-status.enum';
 
 @Entity('subscriptions')

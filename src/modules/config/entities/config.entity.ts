@@ -2,8 +2,8 @@ import { Column, Entity } from 'typeorm';
 
 import { AbstractEntity } from '../../../../src/common/abstract.entity';
 import { ConfigDto } from '../dto/config.dto';
-import { RetentionEntity } from './retention.entity';
 import { FeesEntity } from './fees.entity';
+import { RetentionEntity } from './retention.entity';
 
 @Entity('config')
 export class ConfigEntity extends AbstractEntity<ConfigDto> {

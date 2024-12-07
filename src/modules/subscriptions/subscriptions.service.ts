@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
+
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
-import { SubscriptionRepository } from './subscriptions.repository';
 import { ConfigService } from '../config/config.service';
+import { SubscriptionRepository } from './subscriptions.repository';
 
 @Injectable()
 export class SubscriptionsService {
@@ -13,9 +14,10 @@ export class SubscriptionsService {
     private readonly subscriptionRepository: SubscriptionRepository,
     private readonly configService: ConfigService,
   ) {}
+
   async generateCheckoutSession(npub: string) {
-    // if(! /^npub1([A-HJ-NP-Z0-9]{32})$/.test(npub)){
-    //   throw new BadRequestException("invalid npub provided.")
+    // if (!/^npub1([A-HJ-NP-Z0-9]{32})$/.test(npub)) {
+    //   throw new BadRequestException('invalid npub provided.');
     // }
 
     const headers = {
@@ -26,13 +28,14 @@ export class SubscriptionsService {
     };
 
     const config = await this.configService.getConfig();
-    if (!config || !config.fees) {
+
+    if (!config?.fees) {
       throw new NotFoundException('subscription plan not found.');
     }
 
     const data = {
-      currency: config.fees.subscription ? config.fees.subscription[0]?.unit! : 'SATS',
-      amount: config.fees.subscription ? config.fees.subscription[0]?.amount! : 0,
+      currency: config.fees.subscription ? config.fees.subscription[0]?.unit : 'SATS',
+      amount: config.fees.subscription ? config.fees.subscription[0]?.amount : 0,
       payment_methods: ['lightning'],
       amount_paid_tolerance: 1,
       metadata: { npub },
@@ -40,9 +43,11 @@ export class SubscriptionsService {
 
     try {
       const response = await axios.post(this.apiUrl, data, { headers });
+
       return response.data;
     } catch (error) {
       console.error('Error generating checkout session:', error.response?.data || error.message);
+
       throw new Error('Could not generate checkout session');
     }
   }
@@ -54,13 +59,14 @@ export class SubscriptionsService {
     unit: string,
   ) {
     const config = await this.configService.getConfig();
-    if (!config || !config.fees) {
+
+    if (!config?.fees) {
       throw new NotFoundException('Subscription plan not found.');
     }
 
     const startDate = Date.now();
-    const period = config.fees.subscription ? config.fees.subscription[0]?.period! : 86400;
-    const endDate = startDate + period * 1000;
+    const period = config.fees.subscription ? config.fees.subscription[0]?.period : null;
+    const endDate = startDate + (period ?? 86_400) * 1000;
 
     const sub = this.subscriptionRepository.create({
       checkoutSessionId,

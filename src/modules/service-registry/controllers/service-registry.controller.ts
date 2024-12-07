@@ -1,10 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
-
-import ServiceRegistryService from '../services/service-registry.service';
 import { ApiTags } from '@nestjs/swagger';
 
+import type RegisterServiceRegistryDto from '../dtos/service-registry-register.dto';
+import ServiceRegistryService from '../services/service-registry.service';
+
 @Controller('service-registry')
-@ApiTags("service-registry")
+@ApiTags('service-registry')
 export default class ServiceRegistryController {
   constructor(private readonly serviceRegistryService: ServiceRegistryService) {}
 
@@ -13,5 +14,9 @@ export default class ServiceRegistryController {
     const services = await this.serviceRegistryService.findAll();
 
     return services.map((s) => s.toDto());
+  }
+
+  async registerService(props: RegisterServiceRegistryDto) {
+    await this.serviceRegistryService.register(props);
   }
 }

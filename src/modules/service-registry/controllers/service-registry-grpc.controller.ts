@@ -5,8 +5,8 @@ import { KrakenServiceRegistryServiceControllerMethods, ServiceTypeEnum } from '
 import { ServiceType } from '../enums/service-types.enum';
 import ServiceRegistryService from '../services/service-registry.service';
 
-@KrakenServiceRegistryServiceControllerMethods()
 @Controller()
+@KrakenServiceRegistryServiceControllerMethods()
 export class ServiceRegistryGrpcController {
   constructor(private readonly serviceRegistryService: ServiceRegistryService) {}
 

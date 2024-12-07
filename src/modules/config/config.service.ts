@@ -13,6 +13,7 @@ export class ConfigService {
 
   async update(props: UpdateConfigDto) {
     let config = await this.getConfig();
+
     if (!config) {
       config = this.configRepo.create(props);
     }

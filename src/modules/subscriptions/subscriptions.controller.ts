@@ -1,9 +1,11 @@
+import * as crypto from 'node:crypto';
+
 import { Body, Controller, Headers, Post, UnauthorizedException } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { SubscriptionsService } from './subscriptions.service';
-import * as crypto from 'crypto';
+
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
 import { SubscriptionGenerateCheckoutSessionDto } from './dto/subscription-generate-checkout-session.dto';
+import { SubscriptionsService } from './subscriptions.service';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
@@ -15,8 +17,8 @@ export class SubscriptionsController {
 
   @Post('checkout-session')
   async generateCheckoutSession(@Body() args: SubscriptionGenerateCheckoutSessionDto) {
-    const data =  await this.subscriptionService.generateCheckoutSession(args.subscriber);
-    return data.url
+    const data = await this.subscriptionService.generateCheckoutSession(args.subscriber);
+    return data.url;
   }
 
   @Post('webhook')

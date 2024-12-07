@@ -1,4 +1,4 @@
-import { NumberFieldOptional, StringFieldOptional } from '../../../../src/decorators';
+import { NumberFieldOptional } from '../../../../src/decorators';
 
 export class RetentionDto {
   @NumberFieldOptional()

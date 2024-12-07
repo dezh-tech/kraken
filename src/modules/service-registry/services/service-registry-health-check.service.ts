@@ -1,5 +1,5 @@
-import type { OnModuleDestroy } from '@nestjs/common';
-import { Injectable } from '@nestjs/common';
+import type { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import type { ServiceRegistryEntity } from '../entities/service-registry.entity';
 import { ServiceStatus } from '../enums/service-status.enum';
@@ -7,64 +7,98 @@ import { ServiceRegistryRepository } from '../service-registry.repository';
 import ServiceRegistryService from './service-registry.service';
 
 @Injectable()
-export default class ServiceRegistryHealthCheckService implements OnModuleDestroy {
+export default class ServiceRegistryHealthCheckService implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(ServiceRegistryHealthCheckService.name);
+
   private serviceIntervals = new Map<string, NodeJS.Timeout>();
 
   constructor(
     private readonly serviceRegistryService: ServiceRegistryService,
     private readonly serviceRegistryRepository: ServiceRegistryRepository,
   ) {
-    this.serviceRegistryService.on('SERVICE_REGISTERED', (s: ServiceRegistryEntity) => {
-      this.scheduleHealthCheck(s);
+    this.serviceRegistryService.on('SERVICE_REGISTERED', (service: ServiceRegistryEntity) => {
+      this.logger.log(`New service registered: ${service.type} (ID: ${service._id})`);
+      this.scheduleHealthCheck(service);
     });
   }
 
   async onModuleInit() {
-    await this.loadServices();
+    this.logger.log('Initializing health checks for all registered services...');
+    await this.initializeHealthChecks();
+    this.logger.log('Health checks initialized successfully.');
   }
 
   onModuleDestroy() {
+    this.logger.log('Cleaning up all health check intervals...');
     this.clearAllIntervals();
+    this.logger.log('All intervals cleared.');
   }
 
-  async loadServices() {
+  private async initializeHealthChecks() {
     this.clearAllIntervals();
-
     const services = await this.serviceRegistryRepository.findAll();
+    this.logger.log(`Found ${services.length} services to initialize health checks.`);
 
     for (const service of services) {
+      this.logger.log(`Scheduling health check for service: ${service.type} (ID: ${service._id})`);
       this.scheduleHealthCheck(service);
     }
   }
 
   private scheduleHealthCheck(service: ServiceRegistryEntity) {
     if (service.heartbeatDurationInSec <= 0) {
+      this.logger.warn(
+        `Skipping health check scheduling for service: ${service.type} (ID: ${service._id}) due to invalid heartbeat duration.`,
+      );
+
       return;
     }
 
-    const intervalId = setInterval(() => {
-      void this.checkServiceHealth(service);
-    }, service.heartbeatDurationInSec * 1000);
+    if (this.serviceIntervals.has(String(service._id))) {
+      this.logger.warn(
+        `Health check for service: ${service.type} (ID: ${service._id}) is already scheduled. Skipping duplicate scheduling.`,
+      );
 
+      return;
+    }
+
+    const intervalId = setInterval(() => void this.performHealthCheck(service), service.heartbeatDurationInSec * 1000);
     this.serviceIntervals.set(String(service._id), intervalId);
+    this.logger.log(
+      `Health check scheduled for service: ${service.type} with a heartbeat duration of ${service.heartbeatDurationInSec} seconds.`,
+    );
   }
 
-  private async checkServiceHealth(service: ServiceRegistryEntity) {
+  private async performHealthCheck(service: ServiceRegistryEntity): Promise<void> {
     try {
-      const isHealthy = false; // TODO: Replace with actual health check logic(grpc health check)
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const status = isHealthy ? ServiceStatus.ACTIVE : ServiceStatus.UN_HEALTHY;
-      service.assign({ lastHealthCheck: Date.now(), status });
+      this.logger.debug(`Performing health check for service: ${service.type} (ID: ${service._id})...`);
+      const isHealthy = false; // TODO: Implement actual health check logic (e.g., gRPC health check)
+      service.assign({
+        lastHealthCheck: Date.now(),
+        status: isHealthy ? ServiceStatus.ACTIVE : ServiceStatus.UN_HEALTHY,
+      });
+      this.logger.log(
+        `Health check result for service: ${service.type} (ID: ${service._id}): ${isHealthy ? 'HEALTHY' : 'UNHEALTHY'}`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to perform health check for service: ${service.type} (ID: ${service._id}). Marking as INACTIVE.`,
+        (error as { stack: string }).stack,
+      );
+      service.assign({
+        lastHealthCheck: Date.now(),
+        status: ServiceStatus.INACTIVE,
+      });
+    } finally {
       await this.serviceRegistryRepository.save(service);
-    } catch {
-      service.assign({ lastHealthCheck: Date.now(), status: ServiceStatus.INACTIVE });
-      await this.serviceRegistryRepository.save(service);
+      this.logger.debug(`Service status updated for service: ${service.type} (ID: ${service._id}).`);
     }
   }
 
   private clearAllIntervals() {
-    for (const [, interval] of this.serviceIntervals) {
+    for (const [serviceId, interval] of this.serviceIntervals) {
       clearInterval(interval);
+      this.logger.log(`Cleared health check interval for service ID: ${serviceId}.`);
     }
 
     this.serviceIntervals.clear();

@@ -33,6 +33,7 @@
     "@nestjs/core": "^10.3.0",
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/microservices": "^10.4.7",
+    "@nestjs/mongoose": "^10.1.0",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.3.0",
     "@nestjs/schedule": "^4.1.1",
@@ -50,6 +51,8 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
+    "mongodb": "^6.11.0",
+    "mongoose": "^8.8.4",
     "morgan": "^1.10.0",
     "nestjs-cls": "^3.6.0",
     "nestjs-i18n": "^10.4.0",
@@ -63,6 +66,7 @@
     "swagger-ui-express": "^5.0.0",
     "ts-proto": "^2.2.7",
     "tslib": "^2.6.2",
+    "typeorm": "^0.3.20",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

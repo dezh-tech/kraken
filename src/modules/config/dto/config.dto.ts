@@ -3,8 +3,8 @@ import { IsArray, IsOptional, IsString } from 'class-validator';
 
 import { AbstractDto } from '../../../common/dto/abstract.dto';
 import type { ConfigEntity } from '../entities/config.entity';
-import { RetentionDto } from './retention.dto';
 import { FeesDto } from './fees.dto';
+import { RetentionDto } from './retention.dto';
 
 export class ConfigDto extends AbstractDto {
   @ApiProperty()
@@ -98,26 +98,20 @@ export class ConfigDto extends AbstractDto {
       time: e.retention?.time,
     };
     this.fees = {
-      admission: e.fees?.admission?.map((a) => {
-        return {
-          amount: a.amount,
-          unit: a.unit,
-        };
-      }),
-      publication: e.fees?.publication?.map((p) => {
-        return {
-          amount: p.amount,
-          kinds: p.kinds,
-          unit: p.unit,
-        };
-      }),
-      subscription: e.fees?.subscription?.map((s) => {
-        return {
-          amount: s.amount,
-          period: s.period,
-          unit: s.unit,
-        };
-      }),
+      admission: e.fees?.admission?.map((a) => ({
+        amount: a.amount,
+        unit: a.unit,
+      })),
+      publication: e.fees?.publication?.map((p) => ({
+        amount: p.amount,
+        kinds: p.kinds,
+        unit: p.unit,
+      })),
+      subscription: e.fees?.subscription?.map((s) => ({
+        amount: s.amount,
+        period: s.period,
+        unit: s.unit,
+      })),
     };
   }
 }
