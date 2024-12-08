@@ -5,7 +5,7 @@ import { HealthCheck, HealthCheckService, MongooseHealthIndicator } from '@nestj
 import JwtAuthGuard from '../auth/guards/jwt-auth.guard';
 
 @Controller('health')
-@ApiTags("health")
+@ApiTags('health')
 export default class HealthController {
   private readonly startTime = Date.now();
 

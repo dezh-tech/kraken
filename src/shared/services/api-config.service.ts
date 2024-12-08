@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import type { RedisModuleOptions } from '@nestjs-modules/ioredis';
 import { isNil } from 'lodash';
 
 @Injectable()
@@ -87,6 +88,13 @@ export class ApiConfigService {
       logging: this.getBoolean('ENABLE_ORM_LOGS'),
       connectTimeoutMS: this.getNumber('MONGO_DB_CONNECTION_TIMEOUT_IN_MS'),
       entities,
+    };
+  }
+
+  get redisConfig(): RedisModuleOptions {
+    return {
+      type: 'single',
+      url: this.getString('REDIS_URI'),
     };
   }
 

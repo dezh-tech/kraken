@@ -21,7 +21,6 @@ message registerServiceRequest {
 message registerServiceResponse {
   bool success = 1;
   optional string message = 2;
-  optional string token = 3;
 }
 
 message EmptyRequest {}

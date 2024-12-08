@@ -1,15 +1,21 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { InjectRedis } from '@nestjs-modules/ioredis';
 import axios from 'axios';
+import Redis from 'ioredis';
 
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
 import { ConfigService } from '../config/config.service';
 import { SubscriptionRepository } from './subscriptions.repository';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class SubscriptionsService {
+  private readonly logger = new Logger(SubscriptionsService.name);
+
   private readonly apiUrl = 'https://api.tryspeed.com/checkout-sessions';
 
   constructor(
+    @InjectRedis() private readonly redis: Redis,
     private readonly apiConfig: ApiConfigService,
     private readonly subscriptionRepository: SubscriptionRepository,
     private readonly configService: ConfigService,
@@ -77,6 +83,39 @@ export class SubscriptionsService {
       endDate,
     });
 
+    await this.redis.call('CF.ADD', 'SUBSCRIPTIONS', subscriber);
+
     await this.subscriptionRepository.save(sub);
+  }
+
+  async seedRedis() {
+    try {
+      const now = Date.now();
+      const subscriptions = await this.subscriptionRepository.findAll({
+        where: {
+          endDate: MoreThan(now),
+        },
+      });
+
+      if (subscriptions.length === 0) {
+        this.logger.warn('No subscriptions found with endDate > now.');
+
+        return;
+      }
+
+      this.logger.log(`Found ${subscriptions.length} subscriptions to add to Redis.`);
+
+      const pipeline = this.redis.pipeline();
+
+      for (const subscription of subscriptions) {
+        pipeline.call('CF.ADD', 'SUBSCRIPTIONS', subscription.subscriber);
+      }
+
+      const results = await pipeline.exec();
+
+      this.logger.log(`Pipeline executed with ${results?.length} commands.`);
+    } catch (error) {
+      this.logger.error('An error occurred during seedRedis execution.', (error as { stack: string }).stack);
+    }
   }
 }

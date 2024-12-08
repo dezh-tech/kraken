@@ -1,6 +1,8 @@
-import type { Metadata } from '@grpc/grpc-js';
+import type { ServerUnaryCall } from '@grpc/grpc-js';
+import { Metadata } from '@grpc/grpc-js';
 import { Controller } from '@nestjs/common';
 
+import { ApiConfigService } from '../../../../src/shared/services/api-config.service';
 import type { registerServiceRequest, registerServiceResponse } from '../../grpc/gen/ts/kraken';
 import { KrakenServiceRegistryServiceControllerMethods, ServiceTypeEnum } from '../../grpc/gen/ts/kraken';
 import { ServiceType } from '../enums/service-types.enum';
@@ -9,36 +11,58 @@ import ServiceRegistryService from '../services/service-registry.service';
 @Controller()
 @KrakenServiceRegistryServiceControllerMethods()
 export class ServiceRegistryGrpcController {
-  constructor(private readonly serviceRegistryService: ServiceRegistryService) {}
+  constructor(
+    private readonly serviceRegistryService: ServiceRegistryService,
+    private readonly apiConfig: ApiConfigService,
+  ) {}
 
   async registerService(
     { heartbeatDurationInSec, type, url }: registerServiceRequest,
     metadata?: Metadata,
+    call?: ServerUnaryCall<unknown, unknown>,
   ): Promise<registerServiceResponse> {
     try {
-      const isValidServiceAuthToken = this.serviceRegistryService.isValidServiceAuthToken(
-        metadata?.getMap().token?.toString() ?? '',
-      );
+      const token = metadata?.getMap().token?.toString();
 
-      if (!isValidServiceAuthToken) {
-        throw new Error('invalid auth token.');
+      if (!token) {
+        throw new Error('Missing authentication token in metadata.');
       }
 
-      const { token } = await this.serviceRegistryService.register({
+      const isValidServiceAuthToken = this.serviceRegistryService.isValidServiceAuthToken(token);
+
+      if (!isValidServiceAuthToken) {
+        throw new Error('Invalid authentication token.');
+      }
+
+      const serviceTypeKey = ServiceTypeEnum[type];
+
+      if (!serviceTypeKey || !(serviceTypeKey in ServiceType)) {
+        throw new Error(`Invalid service type: ${type}`);
+      }
+
+      const { token: newToken } = await this.serviceRegistryService.register({
         heartbeatDurationInSec,
         url,
-        type: ServiceType[ServiceTypeEnum[type] as keyof typeof ServiceType],
+        type: ServiceType[serviceTypeKey as keyof typeof ServiceType],
       });
+
+      const responseMetadata = new Metadata();
+      responseMetadata.add('token', newToken);
+
+      if (call) {
+        call.sendMetadata(responseMetadata);
+      }
 
       return {
         success: true,
-        message: '',
-        token,
       };
     } catch (error) {
+      const err = error as { message: string; stack: string };
+
       return {
         success: false,
-        message: JSON.stringify(error.message),
+        message: err.message || 'An unknown error occurred.',
+        ...(this.apiConfig.isDevelopment && { details: err.stack }),
       };
     }
   }

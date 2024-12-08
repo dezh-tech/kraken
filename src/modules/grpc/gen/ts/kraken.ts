@@ -27,7 +27,6 @@ export interface registerServiceRequest {
 export interface registerServiceResponse {
   success: boolean;
   message?: string | undefined;
-  token?: string | undefined;
 }
 
 export interface EmptyRequest {

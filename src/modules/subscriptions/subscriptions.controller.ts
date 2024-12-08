@@ -71,12 +71,16 @@ export class SubscriptionsController {
       hmac.update(signedPayload, 'utf8');
       const expectedSignature = hmac.digest('base64');
 
-      const isSignatureValid = signature === expectedSignature;
-
-      return isSignatureValid;
+      return signature === expectedSignature;
     } catch (error) {
       console.error('Error during signature verification:', error);
+
       throw new UnauthorizedException('Invalid signature');
     }
+  }
+
+  @Post('seedRedis')
+  seedRedis() {
+    return this.subscriptionService.seedRedis();
   }
 }
