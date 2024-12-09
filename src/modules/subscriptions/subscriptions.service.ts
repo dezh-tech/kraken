@@ -6,7 +6,8 @@ import Redis from 'ioredis';
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
 import { ConfigService } from '../config/config.service';
 import { SubscriptionRepository } from './subscriptions.repository';
-import { MoreThan } from 'typeorm';
+import { MoreThan, ObjectId } from 'typeorm';
+import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 
 @Injectable()
 export class SubscriptionsService {
@@ -117,5 +118,19 @@ export class SubscriptionsService {
     } catch (error) {
       this.logger.error('An error occurred during seedRedis execution.', (error as { stack: string }).stack);
     }
+  }
+
+  async updateSubscription(id: string, props: UpdateSubscriptionDto) {
+    const s = await this.subscriptionRepository.findOne({ where: { _id: new ObjectId(id) } });
+
+    if (!s) {
+      throw new NotFoundException('subscription not found');
+    }
+
+    s.assign({
+      ...props,
+    });
+
+    await this.subscriptionRepository.save(s);
   }
 }

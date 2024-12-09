@@ -2,7 +2,7 @@ import { Column, Entity } from 'typeorm';
 
 import { AbstractEntity } from '../../../../src/common/abstract.entity';
 import { SubscriptionDto } from '../dto/subscription.dto';
-import { SubscriptionStatus } from '../enums/subscription-status.enum';
+import { SubscriptionStatusEnum } from '../enums/subscription-status.enum';
 
 @Entity('subscriptions')
 export class SubscriptionEntity extends AbstractEntity<SubscriptionDto> {
@@ -20,8 +20,8 @@ export class SubscriptionEntity extends AbstractEntity<SubscriptionDto> {
   @Column('timestamp')
   endDate: number;
 
-  @Column({ enum: SubscriptionStatus, type: 'enum', default: SubscriptionStatus.ACTIVE })
-  status: SubscriptionStatus;
+  @Column({ enum: SubscriptionStatusEnum, type: 'enum', default: SubscriptionStatusEnum.ACTIVE })
+  status: SubscriptionStatusEnum;
 
   @Column('number')
   totalAmount: number;

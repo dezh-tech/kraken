@@ -1,11 +1,12 @@
 import * as crypto from 'node:crypto';
 
-import { Body, Controller, Headers, Post, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Headers, Param, Patch, Post, UnauthorizedException } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
 import { SubscriptionGenerateCheckoutSessionDto } from './dto/subscription-generate-checkout-session.dto';
 import { SubscriptionsService } from './subscriptions.service';
+import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
@@ -82,5 +83,10 @@ export class SubscriptionsController {
   @Post('seedRedis')
   seedRedis() {
     return this.subscriptionService.seedRedis();
+  }
+
+  @Patch(':id')
+  updateSubscription(@Param('id') id: string, @Body() props: UpdateSubscriptionDto) {
+    return this.subscriptionService.updateSubscription(id, props);
   }
 }

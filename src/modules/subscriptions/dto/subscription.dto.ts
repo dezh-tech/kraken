@@ -1,20 +1,30 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum } from 'class-validator';
+
 import { AbstractDto } from '../../../../src/common/dto/abstract.dto';
-import { StringField } from '../../../../src/decorators';
-import type { SubscriptionStatus } from '../enums/subscription-status.enum';
+import { NumberField, StringField } from '../../../../src/decorators';
+import { SubscriptionStatusEnum } from '../enums/subscription-status.enum';
 
 export class SubscriptionDto extends AbstractDto {
   @StringField()
   subscriber: string;
 
+  @StringField()
   checkoutSessionId: string;
 
-  startDate: Date;
+  @NumberField()
+  startDate: number;
 
-  endDate: Date;
+  @NumberField()
+  endDate: number;
 
-  status: SubscriptionStatus;
+  @ApiProperty()
+  @IsEnum(() => SubscriptionStatusEnum)
+  status: SubscriptionStatusEnum;
 
+  @NumberField()
   totalAmount: number;
 
+  @StringField()
   unit: string;
 }
