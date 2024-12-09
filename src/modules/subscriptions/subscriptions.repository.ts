@@ -27,4 +27,8 @@ export class SubscriptionRepository {
   create(entityLike: DeepPartial<SubscriptionEntity>) {
     return this.repository.create(entityLike);
   }
+
+  delete(id: string) {
+    return this.repository.delete(id);
+  }
 }

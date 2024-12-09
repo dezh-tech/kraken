@@ -133,4 +133,16 @@ export class SubscriptionsService {
 
     await this.subscriptionRepository.save(s);
   }
+
+  async deleteSubscription(id: string) {
+    const s = await this.subscriptionRepository.findOne({ where: { _id: new ObjectId(id) } });
+
+    if (!s) {
+      throw new NotFoundException('subscription not found');
+    }
+
+    await this.subscriptionRepository.delete(id);
+
+    await this.redis.call('CF.DEL', 'SUBSCRIPTIONS', s.subscriber);
+  }
 }

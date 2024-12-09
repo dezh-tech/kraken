@@ -1,6 +1,6 @@
 import * as crypto from 'node:crypto';
 
-import { Body, Controller, Headers, Param, Patch, Post, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Delete, Headers, Param, Patch, Post, UnauthorizedException } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
@@ -88,5 +88,10 @@ export class SubscriptionsController {
   @Patch(':id')
   updateSubscription(@Param('id') id: string, @Body() props: UpdateSubscriptionDto) {
     return this.subscriptionService.updateSubscription(id, props);
+  }
+
+  @Delete(':id')
+  deleteSubscription(@Param('id') id: string) {
+    return this.subscriptionService.deleteSubscription(id);
   }
 }
