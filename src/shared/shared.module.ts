@@ -4,9 +4,11 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule } from '@nestjs-modules/ioredis';
 
+import { TelegramNotificationStrategy } from './notification/telegram.strategy';
 import { ApiConfigService } from './services/api-config.service';
+import { NotificationService } from './services/notification.service';
 
-const providers: Provider[] = [ConfigService, ApiConfigService];
+const providers: Provider[] = [ConfigService, ApiConfigService, NotificationService, TelegramNotificationStrategy];
 
 @Global()
 @Module({

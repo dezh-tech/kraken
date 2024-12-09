@@ -69,6 +69,13 @@ export class ApiConfigService {
     };
   }
 
+  get getTelegramConfig() {
+    return {
+      botToken: this.getString('TELEGRAM_BOT_TOKEN'),
+      chatId: this.getString('TELEGRAM_CHAT_ID'),
+    };
+  }
+
   get trySpeedConfig() {
     return {
       webhookSecret: this.getString('TRYSPEED_WEBHOOK_SECRET'),

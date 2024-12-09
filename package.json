@@ -58,6 +58,7 @@
     "morgan": "^1.10.0",
     "nestjs-cls": "^3.6.0",
     "nestjs-i18n": "^10.4.0",
+    "nostr-tools": "^2.10.4",
     "parse-duration": "^1.1.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
@@ -69,7 +70,8 @@
     "ts-proto": "^2.2.7",
     "tslib": "^2.6.2",
     "typeorm": "^0.3.20",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@handfish/hygen": "^6.1.6",
@@ -89,6 +91,7 @@
     "@types/passport-local": "^1.0.38",
     "@types/supertest": "^2.0.16",
     "@types/uuid": "^9.0.7",
+    "@types/ws": "^8.5.13",
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",
     "cross-env": "^7.0.3",
