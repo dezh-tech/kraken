@@ -23,10 +23,10 @@ export class ServiceRegistryEntity extends AbstractEntity<ServiceRegistryDto> {
   })
   status: ServiceStatus;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar' })
   url: string;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'int', default: 10 })
   heartbeatDurationInSec: number;
 
   @Column({ type: 'int', default: 0 })
@@ -34,6 +34,9 @@ export class ServiceRegistryEntity extends AbstractEntity<ServiceRegistryDto> {
 
   @Column({ type: 'varchar' })
   token: string;
+
+  @Column({ type: 'varchar' })
+  region: string;
 
   constructor(item?: Partial<ServiceRegistryEntity>) {
     super();
@@ -54,5 +57,6 @@ export class ServiceRegistryEntity extends AbstractEntity<ServiceRegistryDto> {
     this.heartbeatDurationInSec = item.heartbeatDurationInSec ?? this.heartbeatDurationInSec;
     this.lastHealthCheck = item.lastHealthCheck ?? this.lastHealthCheck;
     this.token = item.token ?? this.token;
+    this.region = item.region ?? this.region;
   }
 }

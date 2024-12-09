@@ -6,4 +6,5 @@ export default class RegisterServiceRegistryDto extends PickType(ServiceRegistry
   'url',
   'heartbeatDurationInSec',
   'type',
+  'region',
 ] as const) {}

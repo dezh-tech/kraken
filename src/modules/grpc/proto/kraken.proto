@@ -11,11 +11,16 @@ service KrakenConfigService {
   rpc getConfig (EmptyRequest) returns (getConfigResponse) {}
 }
 
+service KrakenLogService {
+  rpc addLog (addLogRequest) returns (addLogResponse) {}
+}
+
 // Request and response messages
 message registerServiceRequest {
   string url = 1;
   uint32 heartbeat_duration_in_sec = 2;
   ServiceTypeEnum type = 3;
+  string region = 4;
 }
 
 message registerServiceResponse {
@@ -24,6 +29,16 @@ message registerServiceResponse {
 }
 
 message EmptyRequest {}
+
+message addLogRequest {
+  string message = 1;
+  string stack = 2;
+}
+
+message addLogResponse {
+  bool success = 1;
+  optional string message = 2;
+}
 
 // Configuration messages
 message getConfigResponse {

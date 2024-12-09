@@ -1,4 +1,3 @@
-import { randomBytes } from 'node:crypto';
 import EventEmitter from 'node:events';
 
 import { Injectable } from '@nestjs/common';
@@ -20,7 +19,7 @@ export default class ServiceRegistryService extends EventEmitter {
 
   async register(props: RegisterServiceRegistryDto) {
     const ns = new ServiceRegistryEntity();
-    const token = this.generateApiKey();
+    const token = this.generateApiKey(props.type, props.region);
     ns.assign({ ...props, token });
     const service = await this.serviceRegistryRepository.save(ns);
 
@@ -33,11 +32,18 @@ export default class ServiceRegistryService extends EventEmitter {
     return this.serviceRegistryRepository.findAll();
   }
 
+  async findByToken(token: string) {
+    return this.serviceRegistryRepository.findOne({ where: { token } });
+  }
+
   isValidServiceAuthToken(token: string) {
     return token === this.apiConfig.serviceAuthToken;
   }
 
-  generateApiKey(length = 32): string {
-    return randomBytes(length).toString('hex').slice(0, length);
+  generateApiKey(serviceType: string, region: string): string {
+    const timestamp = Date.now().toString(36);
+    const randomPart = Math.floor(Math.random() * 1e6).toString(36);
+
+    return `${serviceType}:${region}-${timestamp}-${randomPart}`;
   }
 }

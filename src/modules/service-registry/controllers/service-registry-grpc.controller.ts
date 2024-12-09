@@ -17,7 +17,7 @@ export class ServiceRegistryGrpcController {
   ) {}
 
   async registerService(
-    { heartbeatDurationInSec, type, url }: registerServiceRequest,
+    { heartbeatDurationInSec, type, url, region }: registerServiceRequest,
     metadata?: Metadata,
     call?: ServerUnaryCall<unknown, unknown>,
   ): Promise<registerServiceResponse> {
@@ -44,6 +44,7 @@ export class ServiceRegistryGrpcController {
         heartbeatDurationInSec,
         url,
         type: ServiceType[serviceTypeKey as keyof typeof ServiceType],
+        region,
       });
 
       const responseMetadata = new Metadata();

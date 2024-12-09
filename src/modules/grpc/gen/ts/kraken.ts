@@ -22,6 +22,7 @@ export interface registerServiceRequest {
   url: string;
   heartbeatDurationInSec: number;
   type: ServiceTypeEnum;
+  region: string;
 }
 
 export interface registerServiceResponse {
@@ -30,6 +31,16 @@ export interface registerServiceResponse {
 }
 
 export interface EmptyRequest {
+}
+
+export interface addLogRequest {
+  message: string;
+  stack: string;
+}
+
+export interface addLogResponse {
+  success: boolean;
+  message?: string | undefined;
 }
 
 /** Configuration messages */
@@ -143,3 +154,31 @@ export function KrakenConfigServiceControllerMethods() {
 }
 
 export const KRAKEN_CONFIG_SERVICE_NAME = "KrakenConfigService";
+
+export interface KrakenLogServiceClient {
+  addLog(request: addLogRequest, metadata?: Metadata): Observable<addLogResponse>;
+}
+
+export interface KrakenLogServiceController {
+  addLog(
+    request: addLogRequest,
+    metadata?: Metadata,
+  ): Promise<addLogResponse> | Observable<addLogResponse> | addLogResponse;
+}
+
+export function KrakenLogServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["addLog"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("KrakenLogService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("KrakenLogService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const KRAKEN_LOG_SERVICE_NAME = "KrakenLogService";
