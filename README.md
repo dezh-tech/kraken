@@ -1,4 +1,11 @@
-# Kraken
+<p align="center">
+<img src="./assets/logo.png" width=300 height=300/>
+</p>
+
+<h1 align="center">
+Kraken
+</h1>
+<br>
 
 **Kraken** is a management service built with [NestJS](https://nestjs.com/) to handle and configure instances of the **Immortal** Nostr relay. Kraken offers a centralized approach to manage the lifecycle, settings, and configurations of one or more Immortal relay instances, making it an ideal tool for high-demand relays like paid or large community relays.
 
