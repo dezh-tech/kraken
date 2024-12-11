@@ -16,46 +16,29 @@ export class ServiceRegistryGrpcController {
     private readonly apiConfig: ApiConfigService,
   ) {}
 
-  async registerService(
-    { heartbeatDurationInSec, type, url, region }: registerServiceRequest,
-    metadata?: Metadata,
-    call?: ServerUnaryCall<unknown, unknown>,
-  ): Promise<registerServiceResponse> {
+  async registerService({
+    heartbeatDurationInSec,
+    type,
+    url,
+    region,
+  }: registerServiceRequest): Promise<registerServiceResponse> {
     try {
-      const token = metadata?.getMap().token?.toString();
-
-      if (!token) {
-        throw new Error('Missing authentication token in metadata.');
-      }
-
-      const isValidServiceAuthToken = this.serviceRegistryService.isValidServiceAuthToken(token);
-
-      if (!isValidServiceAuthToken) {
-        throw new Error('Invalid authentication token.');
-      }
-
       const serviceTypeKey = ServiceTypeEnum[type];
 
       if (!serviceTypeKey || !(serviceTypeKey in ServiceType)) {
         throw new Error(`Invalid service type: ${type}`);
       }
 
-      const { token: newToken } = await this.serviceRegistryService.register({
+      const { token } = await this.serviceRegistryService.register({
         heartbeatDurationInSec,
         url,
         type: ServiceType[serviceTypeKey as keyof typeof ServiceType],
         region,
       });
 
-      const responseMetadata = new Metadata();
-      responseMetadata.add('token', newToken);
-
-      if (call) {
-        call.sendMetadata(responseMetadata);
-      }
-
       return {
         success: true,
+        token: token,
       };
     } catch (error) {
       const err = error as { message: string; stack: string };
@@ -64,6 +47,7 @@ export class ServiceRegistryGrpcController {
         success: false,
         message: err.message || 'An unknown error occurred.',
         ...(this.apiConfig.isDevelopment && { details: err.stack }),
+        token: '',
       };
     }
   }

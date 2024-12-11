@@ -36,9 +36,6 @@ export default class ServiceRegistryService extends EventEmitter {
     return this.serviceRegistryRepository.findOne({ where: { token } });
   }
 
-  isValidServiceAuthToken(token: string) {
-    return token === this.apiConfig.serviceAuthToken;
-  }
 
   generateApiKey(serviceType: string, region: string): string {
     const timestamp = Date.now().toString(36);
