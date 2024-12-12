@@ -3,15 +3,15 @@ syntax = "proto3";
 package kraken;
 
 // Service definition
-service KrakenServiceRegistryService {
+service ServiceRegistry {
   rpc registerService (registerServiceRequest) returns (registerServiceResponse) {}
 }
 
-service KrakenConfigService {
+service Config {
   rpc getConfig (EmptyRequest) returns (getConfigResponse) {}
 }
 
-service KrakenLogService {
+service Log {
   rpc addLog (addLogRequest) returns (addLogResponse) {}
 }
 
