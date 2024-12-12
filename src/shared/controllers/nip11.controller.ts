@@ -1,13 +1,13 @@
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ConfigService } from '../../../src/modules/config/config.service';
-import { ConfigDto } from '../../../src/modules/config/dto/config.dto';
+import { Nip11DTO } from '../../modules/config/dto/nip11.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller()
-@ApiTags("NIP-11")
+@ApiTags('NIP-11')
 export class Nip11Controller {
-  private CONFIG: ConfigDto | null = null;
+  private CONFIG: Nip11DTO | null = null;
 
   constructor(private readonly configService: ConfigService) {
     this.initializeConfigListener();
@@ -19,7 +19,7 @@ export class Nip11Controller {
       await this.setConfig();
     }
 
-    const { id, createdAt, updatedAt, ...config } = this.CONFIG!;
+    const { id, createdAt, updatedAt, url, ...config } = this.CONFIG!;
 
     if (req.headers['accept'] === 'application/nostr+json') {
       res.json(config);
@@ -29,17 +29,17 @@ export class Nip11Controller {
   }
 
   private async setConfig(): Promise<void> {
-    const config = await this.configService.getConfig();
-    this.CONFIG = config?.toDto() as ConfigDto;
+    const config = await this.configService.getNip11();
+    this.CONFIG = config?.toDto() as Nip11DTO;
   }
 
   private initializeConfigListener(): void {
-    this.configService.on('CONFIG-UPDATED', async () => {
+    this.configService.on('NIP11-UPDATED', async () => {
       await this.setConfig();
     });
   }
 
-  private generateHtmlResponse(config: Omit<ConfigDto, 'id' | 'createdAt' | 'updatedAt'>): string {
+  private generateHtmlResponse(config: Omit<Nip11DTO, 'id' | 'createdAt' | 'updatedAt'>): string {
     const currentYear = new Date().getFullYear();
 
     const tableRows = Object.entries(config)

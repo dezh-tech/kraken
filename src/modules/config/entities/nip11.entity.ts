@@ -1,13 +1,14 @@
 import { Column, Entity } from 'typeorm';
 
-import { AbstractEntity } from '../../../../src/common/abstract.entity';
-import { ConfigDto } from '../dto/config.dto';
+import { AbstractEntity } from '../../../common/abstract.entity';
+import { Nip11DTO } from '../dto/nip11.dto';
 import { FeesEntity } from './fees.entity';
 import { RetentionEntity } from './retention.entity';
+import { LimitationEntity } from './limitaion.entity';
 
 @Entity('config')
-export class ConfigEntity extends AbstractEntity<ConfigDto> {
-  dtoClass = ConfigDto;
+export class Nip11Entity extends AbstractEntity<Nip11DTO> {
+  dtoClass = Nip11DTO;
 
   @Column({ type: 'varchar' })
   name: string;
@@ -57,7 +58,10 @@ export class ConfigEntity extends AbstractEntity<ConfigDto> {
   @Column({ type: 'json', nullable: true })
   fees?: FeesEntity;
 
-  constructor(item?: Partial<Omit<ConfigEntity, 'id'>>) {
+  @Column({ type: 'json', nullable: true })
+  limitations?: LimitationEntity;
+
+  constructor(item?: Partial<Omit<Nip11Entity, 'id'>>) {
     super();
 
     if (!item) {
@@ -68,7 +72,7 @@ export class ConfigEntity extends AbstractEntity<ConfigDto> {
   }
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
-  assign(item: Partial<Omit<ConfigEntity, 'id'>>): void {
+  assign(item: Partial<Omit<Nip11Entity, 'id'>>): void {
     super.assign(item);
 
     this.name = item.name ?? this.name;
@@ -87,5 +91,6 @@ export class ConfigEntity extends AbstractEntity<ConfigDto> {
     this.url = item.url ?? this.url;
     this.retention = item.retention ?? this.retention;
     this.fees = item.fees ?? this.fees;
+    this.limitations = item.limitations ?? this.limitations;
   }
 }

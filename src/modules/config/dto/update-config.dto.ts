@@ -1,5 +1,5 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
 
-import { ConfigDto } from './config.dto';
+import { Nip11DTO } from './nip11.dto';
 
-export class UpdateConfigDto extends PartialType(OmitType(ConfigDto, ['id', 'createdAt', 'updatedAt'] as const)) {}
+export class UpdateNip11Dto extends PartialType(OmitType(Nip11DTO, ['id', 'createdAt', 'updatedAt'] as const)) {}

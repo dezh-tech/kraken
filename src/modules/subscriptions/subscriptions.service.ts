@@ -34,7 +34,7 @@ export class SubscriptionsService {
       authorization: `Basic ${Buffer.from(`${this.apiConfig.trySpeedConfig.apiKey}:`).toString('base64')}`,
     };
 
-    const config = await this.configService.getConfig();
+    const config = await this.configService.getNip11();
 
     if (!config?.fees) {
       throw new NotFoundException('subscription plan not found.');
@@ -65,7 +65,7 @@ export class SubscriptionsService {
     totalAmount: number,
     unit: string,
   ) {
-    const config = await this.configService.getConfig();
+    const config = await this.configService.getNip11();
 
     if (!config?.fees) {
       throw new NotFoundException('Subscription plan not found.');

@@ -45,54 +45,36 @@ export interface addLogResponse {
   message?: string | undefined;
 }
 
-/** Configuration messages */
+export interface limitations {
+  /** Maximum length of a message */
+  maxMessageLength: number;
+  /** Maximum number of subscriptions */
+  maxSubscriptions: number;
+  /** Maximum number of filters */
+  maxFilters: number;
+  /** Maximum length of a subscription ID */
+  maxSubidLength: number;
+  /** Minimum proof-of-work difficulty */
+  minPowDifficulty: number;
+  /** Whether authentication is required */
+  authRequired: boolean;
+  /** Whether payment is required */
+  paymentRequired: boolean;
+  /** Whether writes are restricted */
+  restrictedWrites: boolean;
+  /** Maximum number of event tags */
+  maxEventTags: number;
+  /** Maximum length of content */
+  maxContentLength: number;
+  /** Lower limit for creation timestamps */
+  createdAtLowerLimit: number;
+  /** Upper limit for creation timestamps */
+  createdAtUpperLimit: number;
+}
+
 export interface getConfigResponse {
-  retention: Retention | undefined;
-  fees: Fees | undefined;
-  name: string;
-  description: string;
-  pubkey: string;
-  contact: string;
-  software: string;
-  supportedNips: number[];
-  version: string;
-  relayCountries: string[];
-  languageTags: string[];
-  tags: string[];
-  postingPolicy: string;
-  paymentsUrl: string;
-  icon: string;
+  limitations: limitations | undefined;
   url: string;
-}
-
-/** Data structure messages */
-export interface Retention {
-  time: number;
-  count: number;
-  kinds: number[];
-}
-
-export interface Subscription {
-  amount: number;
-  unit: string;
-  period: number;
-}
-
-export interface Admission {
-  amount: number;
-  unit: string;
-}
-
-export interface Publication {
-  kinds: number[];
-  amount: number;
-  unit: string;
-}
-
-export interface Fees {
-  subscription: Subscription[];
-  publication: Publication[];
-  admission: Admission[];
 }
 
 export const KRAKEN_PACKAGE_NAME = "kraken";

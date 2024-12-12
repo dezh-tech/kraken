@@ -3,28 +3,28 @@ import { InjectRepository } from '@nestjs/typeorm';
 import type { DeepPartial, FindManyOptions, FindOneOptions } from 'typeorm';
 import { MongoRepository } from 'typeorm';
 
-import { ConfigEntity } from './entities/config.entity';
+import { Nip11Entity } from '../entities/nip11.entity';
 
 @Injectable()
-export class ConfigRepository {
+export class Nip11Repository {
   constructor(
-    @InjectRepository(ConfigEntity)
-    private repository: MongoRepository<ConfigEntity>,
+    @InjectRepository(Nip11Entity)
+    private repository: MongoRepository<Nip11Entity>,
   ) {}
 
-  async findAll(options?: FindManyOptions<ConfigEntity> | undefined) {
+  async findAll(options?: FindManyOptions<Nip11Entity> | undefined) {
     return this.repository.find({ ...options });
   }
 
-  async findOne(options?: FindOneOptions<ConfigEntity>) {
+  async findOne(options?: FindOneOptions<Nip11Entity>) {
     return this.repository.findOne({ ...options });
   }
 
-  async save(data: ConfigEntity) {
+  async save(data: Nip11Entity) {
     await this.repository.save(data);
   }
 
-  create(entityLike: DeepPartial<ConfigEntity>) {
+  create(entityLike: DeepPartial<Nip11Entity>) {
     return this.repository.create(entityLike);
   }
 }

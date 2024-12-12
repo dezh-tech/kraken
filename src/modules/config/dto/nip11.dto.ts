@@ -2,11 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsOptional, IsString } from 'class-validator';
 
 import { AbstractDto } from '../../../common/dto/abstract.dto';
-import type { ConfigEntity } from '../entities/config.entity';
+import type { Nip11Entity } from '../entities/nip11.entity';
 import { FeesDto } from './fees.dto';
 import { RetentionDto } from './retention.dto';
+import { LimitationDto } from './limitation.dto';
 
-export class ConfigDto extends AbstractDto {
+export class Nip11DTO extends AbstractDto {
   @ApiProperty()
   @IsString()
   name: string;
@@ -75,7 +76,11 @@ export class ConfigDto extends AbstractDto {
   @IsOptional()
   fees?: FeesDto;
 
-  constructor(e: ConfigEntity) {
+  @ApiProperty({ type: () => LimitationDto, required: false })
+  @IsOptional()
+  limitations?: LimitationDto;
+
+  constructor(e: Nip11Entity) {
     super(e);
 
     this.name = e.name;
@@ -112,6 +117,21 @@ export class ConfigDto extends AbstractDto {
         period: s.period,
         unit: s.unit,
       })),
+    };
+
+    this.limitations = {
+      authRequired: e.limitations?.authRequired,
+      maxMessageLength: e.limitations?.maxMessageLength,
+      maxSubidLength: e.limitations?.maxSubidLength,
+      maxFilters: e.limitations?.maxFilters,
+      maxSubscriptions: e.limitations?.maxSubscriptions,
+      minPowDifficulty: e.limitations?.minPowDifficulty,
+      paymentRequired: e.limitations?.paymentRequired,
+      restrictedWrites: e.limitations?.restrictedWrites,
+      maxEventTags: e.limitations?.maxEventTags,
+      maxContentLength: e.limitations?.maxContentLength,
+      createdAtLowerLimit: e.limitations?.createdAtLowerLimit,
+      createdAtUpperLimit: e.limitations?.createdAtUpperLimit,
     };
   }
 }

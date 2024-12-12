@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ConfigRepository } from './config.repository';
+import { Nip11Repository } from './repositories/nip11.repository';
 import { ConfigService } from './config.service';
 import { ServiceConfigController } from './controllers/config.controller';
 import { ConfigGrpcController } from './controllers/config-grpc.controller';
-import { ConfigEntity } from './entities/config.entity';
+import { Nip11Entity } from './entities/nip11.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ConfigEntity])],
-  providers: [ConfigService, ConfigRepository],
+  imports: [TypeOrmModule.forFeature([Nip11Entity])],
+  providers: [ConfigService, Nip11Repository],
   controllers: [ServiceConfigController, ConfigGrpcController],
   exports: [ConfigService],
 })
