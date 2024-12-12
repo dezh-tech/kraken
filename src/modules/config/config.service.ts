@@ -2,10 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { ConfigRepository } from './config.repository';
 import type { UpdateConfigDto } from './dto/update-config.dto';
+import { EventEmitter } from 'node:stream';
 
 @Injectable()
-export class ConfigService {
-  constructor(private readonly configRepo: ConfigRepository) {}
+export class ConfigService extends EventEmitter {
+  constructor(private readonly configRepo: ConfigRepository) {
+    super();
+  }
 
   async getConfig() {
     return this.configRepo.findOne();
@@ -20,6 +23,10 @@ export class ConfigService {
 
     config.assign(props);
 
-    return this.configRepo.save(config);
+    const res = await this.configRepo.save(config);
+
+    this.emit('CONFIG-UPDATED', res);
+
+    return res;
   }
 }
