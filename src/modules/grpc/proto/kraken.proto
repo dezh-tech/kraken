@@ -93,5 +93,6 @@ message Fees {
 
 // Enum definitions
 enum ServiceTypeEnum {
-  RELAY = 0;
+  UNKNOWN = 0;
+  RELAY = 1;
 }

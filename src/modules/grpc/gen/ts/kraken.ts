@@ -13,7 +13,8 @@ export const protobufPackage = "kraken";
 
 /** Enum definitions */
 export enum ServiceTypeEnum {
-  RELAY = 0,
+  UNKNOWN = 0,
+  RELAY = 1,
   UNRECOGNIZED = -1,
 }
 
