@@ -1,12 +1,12 @@
 import { Controller } from '@nestjs/common';
 
 import type { getConfigResponse } from '../../../../src/modules/grpc/gen/ts/kraken';
-import { KrakenConfigServiceControllerMethods } from '../../../../src/modules/grpc/gen/ts/kraken';
+import { ConfigControllerMethods } from '../../../../src/modules/grpc/gen/ts/kraken';
 import { ConfigService } from '../config.service';
 
 @Controller()
-@KrakenConfigServiceControllerMethods()
-export class ConfigGrpcController {
+@ConfigControllerMethods()
+export class ConfigGrpcController implements ConfigGrpcController {
   constructor(private readonly configService: ConfigService) {}
 
   async getConfig(): Promise<getConfigResponse> {

@@ -3,13 +3,13 @@ import { Controller } from '@nestjs/common';
 
 import ServiceRegistryService from '../../../../src/modules/service-registry/services/service-registry.service';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
-import type { addLogRequest, addLogResponse, KrakenLogServiceController } from '../../grpc/gen/ts/kraken';
-import { KrakenLogServiceControllerMethods } from '../../grpc/gen/ts/kraken';
+import type { addLogRequest, addLogResponse, LogController } from '../../grpc/gen/ts/kraken';
+import { LogControllerMethods } from '../../grpc/gen/ts/kraken';
 import { LogService } from '../log.service';
 
 @Controller()
-@KrakenLogServiceControllerMethods()
-export class LogGrpcController implements KrakenLogServiceController {
+@LogControllerMethods()
+export class LogGrpcController implements LogController {
   constructor(
     private readonly logService: LogService,
     private readonly apiConfig: ApiConfigService,

@@ -98,88 +98,88 @@ export const KRAKEN_PACKAGE_NAME = "kraken";
 
 /** Service definition */
 
-export interface KrakenServiceRegistryServiceClient {
+export interface ServiceRegistryClient {
   registerService(request: registerServiceRequest, metadata?: Metadata): Observable<registerServiceResponse>;
 }
 
 /** Service definition */
 
-export interface KrakenServiceRegistryServiceController {
+export interface ServiceRegistryController {
   registerService(
     request: registerServiceRequest,
     metadata?: Metadata,
   ): Promise<registerServiceResponse> | Observable<registerServiceResponse> | registerServiceResponse;
 }
 
-export function KrakenServiceRegistryServiceControllerMethods() {
+export function ServiceRegistryControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = ["registerService"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("KrakenServiceRegistryService", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod("ServiceRegistry", method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("KrakenServiceRegistryService", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod("ServiceRegistry", method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const KRAKEN_SERVICE_REGISTRY_SERVICE_NAME = "KrakenServiceRegistryService";
+export const SERVICE_REGISTRY_SERVICE_NAME = "ServiceRegistry";
 
-export interface KrakenConfigServiceClient {
+export interface ConfigClient {
   getConfig(request: EmptyRequest, metadata?: Metadata): Observable<getConfigResponse>;
 }
 
-export interface KrakenConfigServiceController {
+export interface ConfigController {
   getConfig(
     request: EmptyRequest,
     metadata?: Metadata,
   ): Promise<getConfigResponse> | Observable<getConfigResponse> | getConfigResponse;
 }
 
-export function KrakenConfigServiceControllerMethods() {
+export function ConfigControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = ["getConfig"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("KrakenConfigService", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod("Config", method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("KrakenConfigService", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod("Config", method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const KRAKEN_CONFIG_SERVICE_NAME = "KrakenConfigService";
+export const CONFIG_SERVICE_NAME = "Config";
 
-export interface KrakenLogServiceClient {
+export interface LogClient {
   addLog(request: addLogRequest, metadata?: Metadata): Observable<addLogResponse>;
 }
 
-export interface KrakenLogServiceController {
+export interface LogController {
   addLog(
     request: addLogRequest,
     metadata?: Metadata,
   ): Promise<addLogResponse> | Observable<addLogResponse> | addLogResponse;
 }
 
-export function KrakenLogServiceControllerMethods() {
+export function LogControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = ["addLog"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("KrakenLogService", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod("Log", method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("KrakenLogService", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod("Log", method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const KRAKEN_LOG_SERVICE_NAME = "KrakenLogService";
+export const LOG_SERVICE_NAME = "Log";

@@ -4,13 +4,13 @@ import { Controller } from '@nestjs/common';
 
 import { ApiConfigService } from '../../../../src/shared/services/api-config.service';
 import type { registerServiceRequest, registerServiceResponse } from '../../grpc/gen/ts/kraken';
-import { KrakenServiceRegistryServiceControllerMethods, ServiceTypeEnum } from '../../grpc/gen/ts/kraken';
+import { ServiceRegistryControllerMethods, ServiceTypeEnum } from '../../grpc/gen/ts/kraken';
 import { ServiceType } from '../enums/service-types.enum';
 import ServiceRegistryService from '../services/service-registry.service';
 
 @Controller()
-@KrakenServiceRegistryServiceControllerMethods()
-export class ServiceRegistryGrpcController {
+@ServiceRegistryControllerMethods()
+export class ServiceRegistryGrpcController implements ServiceRegistryGrpcController {
   constructor(
     private readonly serviceRegistryService: ServiceRegistryService,
     private readonly apiConfig: ApiConfigService,
