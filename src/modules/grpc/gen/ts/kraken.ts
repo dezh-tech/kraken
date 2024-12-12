@@ -11,60 +11,82 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "kraken";
 
-/** Enum definitions */
+/** Define the syntax version for Protocol Buffers */
+
+/** Types of services that can be registered */
 export enum ServiceTypeEnum {
+  /** UNKNOWN - Unknown service type */
   UNKNOWN = 0,
+  /** RELAY - Relay service type */
   RELAY = 1,
   UNRECOGNIZED = -1,
 }
 
-/** Request and response messages */
+/** Request to register a service */
 export interface registerServiceRequest {
+  /** Service URL */
   url: string;
+  /** Heartbeat interval in seconds */
   heartbeatDurationInSec: number;
+  /** Type of the service (e.g., RELAY) */
   type: ServiceTypeEnum;
+  /** Region of the service */
   region: string;
 }
 
+/** Response after registering a service */
 export interface registerServiceResponse {
+  /** Indicates if registration was successful */
   success: boolean;
-  message?: string | undefined;
+  /** Optional message with additional information */
+  message?:
+    | string
+    | undefined;
+  /** Token assigned to the registered service */
   token: string;
 }
 
+/** Empty request used for methods that do not require parameters */
 export interface EmptyRequest {
 }
 
+/** Request to add a log entry */
 export interface addLogRequest {
+  /** Log message content */
   message: string;
+  /** Stack trace or additional log details */
   stack: string;
 }
 
+/** Response after adding a log entry */
 export interface addLogResponse {
+  /** Indicates if the log entry was successfully added */
   success: boolean;
+  /** Optional message with additional information */
   message?: string | undefined;
 }
 
+/** Configuration limitations */
 export interface limitations {
-  /** Maximum length of a message */
+  /** Maximum allowed message length */
   maxMessageLength: number;
-  /** Maximum number of subscriptions */
+  /** Maximum number of subscriptions allowed */
   maxSubscriptions: number;
-  /** Maximum number of filters */
+  /** Maximum number of filters allowed */
   maxFilters: number;
   /** Maximum length of a subscription ID */
   maxSubidLength: number;
   /** Minimum proof-of-work difficulty */
   minPowDifficulty: number;
-  /** Whether authentication is required */
+  /** Indicates if authentication is required */
   authRequired: boolean;
-  /** Whether payment is required */
+  /** Indicates if payment is required */
   paymentRequired: boolean;
-  /** Whether writes are restricted */
+  /** Indicates if writes are restricted */
   restrictedWrites: boolean;
-  /** Maximum number of event tags */
+  /** Maximum number of event tags allowed */
   maxEventTags: number;
-  /** Maximum length of content */
+  /** Maximum length of content allowed */
   maxContentLength: number;
   /** Lower limit for creation timestamps */
   createdAtLowerLimit: number;
@@ -72,22 +94,31 @@ export interface limitations {
   createdAtUpperLimit: number;
 }
 
+/** Response containing configuration details */
 export interface getConfigResponse {
-  limitations: limitations | undefined;
+  /** Configuration limitations */
+  limitations:
+    | limitations
+    | undefined;
+  /** Service URL */
   url: string;
 }
 
 export const KRAKEN_PACKAGE_NAME = "kraken";
 
-/** Service definition */
+/** ServiceRegistry handles service registration */
 
 export interface ServiceRegistryClient {
+  /** Registers a service with the registry */
+
   registerService(request: registerServiceRequest, metadata?: Metadata): Observable<registerServiceResponse>;
 }
 
-/** Service definition */
+/** ServiceRegistry handles service registration */
 
 export interface ServiceRegistryController {
+  /** Registers a service with the registry */
+
   registerService(
     request: registerServiceRequest,
     metadata?: Metadata,
@@ -111,11 +142,19 @@ export function ServiceRegistryControllerMethods() {
 
 export const SERVICE_REGISTRY_SERVICE_NAME = "ServiceRegistry";
 
+/** Config service provides configuration details */
+
 export interface ConfigClient {
+  /** Retrieves the current configuration */
+
   getConfig(request: EmptyRequest, metadata?: Metadata): Observable<getConfigResponse>;
 }
 
+/** Config service provides configuration details */
+
 export interface ConfigController {
+  /** Retrieves the current configuration */
+
   getConfig(
     request: EmptyRequest,
     metadata?: Metadata,
@@ -139,11 +178,19 @@ export function ConfigControllerMethods() {
 
 export const CONFIG_SERVICE_NAME = "Config";
 
+/** Log service handles logging operations */
+
 export interface LogClient {
+  /** Adds a log entry */
+
   addLog(request: addLogRequest, metadata?: Metadata): Observable<addLogResponse>;
 }
 
+/** Log service handles logging operations */
+
 export interface LogController {
+  /** Adds a log entry */
+
   addLog(
     request: addLogRequest,
     metadata?: Metadata,
