@@ -35,7 +35,3 @@ EXPOSE 50051
 
 # Start the Nest.js application
 CMD ["yarn", "start:prod"]
-
-# Healthcheck to check the application's health on port 5000
-HEALTHCHECK --interval=30s --timeout=10s \
-    CMD curl -f http://localhost:3000/health || exit 1
