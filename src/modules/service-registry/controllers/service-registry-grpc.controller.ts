@@ -1,5 +1,4 @@
-import type { ServerUnaryCall } from '@grpc/grpc-js';
-import { Metadata } from '@grpc/grpc-js';
+import type { ServerUnaryCall, Metadata } from '@grpc/grpc-js';
 import { Controller } from '@nestjs/common';
 
 import { ApiConfigService } from '../../../../src/shared/services/api-config.service';
@@ -16,22 +15,25 @@ export class ServiceRegistryGrpcController implements ServiceRegistryGrpcControl
     private readonly apiConfig: ApiConfigService,
   ) {}
 
-  async registerService({
-    heartbeatDurationInSec,
-    type,
-    url,
-    region,
-  }: registerServiceRequest): Promise<registerServiceResponse> {
+  async registerService(
+    request: registerServiceRequest,
+    _metadata: Metadata,
+    call: ServerUnaryCall<registerServiceRequest, registerServiceResponse>,
+  ): Promise<registerServiceResponse> {
     try {
+      const { heartbeatDurationInSec, type, region } = request;
+
       const serviceTypeKey = ServiceTypeEnum[type];
 
       if (!serviceTypeKey || !(serviceTypeKey in ServiceType)) {
         throw new Error(`Invalid service type: ${type}`);
       }
 
+      const callerIp = call.getPeer();
+
       const { token } = await this.serviceRegistryService.register({
         heartbeatDurationInSec,
-        url,
+        url: callerIp,
         type: ServiceType[serviceTypeKey as keyof typeof ServiceType],
         region,
       });
