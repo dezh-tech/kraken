@@ -132,6 +132,8 @@ export class Nip11DTO extends AbstractDto {
       maxContentLength: e.limitations?.maxContentLength,
       createdAtLowerLimit: e.limitations?.createdAtLowerLimit,
       createdAtUpperLimit: e.limitations?.createdAtUpperLimit,
+      defaultQueryLimit: e.limitations?.maxQueryLimit,
+      maxQueryLimit: e.limitations?.maxQueryLimit,
     };
   }
 }

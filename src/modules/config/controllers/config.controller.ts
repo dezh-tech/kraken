@@ -3,7 +3,6 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { ConfigService } from '../config.service';
 import { UpdateNip11Dto } from '../dto/update-config.dto';
-import { updateLimitationDto } from '../dto/update-limitation.dto';
 
 @Controller('config')
 @ApiTags('config')

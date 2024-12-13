@@ -70,6 +70,8 @@ message limitations {
   int32 max_content_length = 10;         // Maximum length of content allowed
   int64 created_at_lower_limit = 11;     // Lower limit for creation timestamps
   int64 created_at_upper_limit = 12;     // Upper limit for creation timestamps
+  uint32 default_query_limit = 13;       // Defualt of query limit
+  uint32 max_query_limit = 14;           // Maximum of query limit
 }
 
 // Response containing configuration details

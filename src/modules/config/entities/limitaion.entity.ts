@@ -36,4 +36,10 @@ export class LimitationEntity {
 
   @Column({ type: 'bigint' })
   createdAtUpperLimit?: number;
+
+  @Column({ type: 'int' })
+  maxQueryLimit?: number;
+
+  @Column({ type: 'int' })
+  defaultQueryLimit?: number;
 }

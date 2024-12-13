@@ -39,7 +39,9 @@ export class Nip11Controller {
     });
   }
 
-  private generateHtmlResponse(config: Omit<Nip11DTO, 'id' | 'createdAt' | 'updatedAt'>): string {
+  private generateHtmlResponse(
+    config: Omit<Nip11DTO, 'id' | 'createdAt' | 'updatedAt' | 'maxQueryLimit' | 'defaultQueryLimit'>,
+  ): string {
     const currentYear = new Date().getFullYear();
 
     const tableRows = Object.entries(config)

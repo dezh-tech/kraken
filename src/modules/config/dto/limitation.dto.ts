@@ -51,4 +51,12 @@ export class LimitationDto {
   @ApiProperty()
   @IsInt()
   createdAtUpperLimit?: number;
+
+  @ApiProperty()
+  @IsInt()
+  maxQueryLimit?: number;
+
+  @ApiProperty()
+  @IsInt()
+  defaultQueryLimit?: number;
 }

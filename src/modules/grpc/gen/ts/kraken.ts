@@ -92,6 +92,10 @@ export interface limitations {
   createdAtLowerLimit: number;
   /** Upper limit for creation timestamps */
   createdAtUpperLimit: number;
+  /** Defualt of query limit */
+  queryDefaultLimit: number;
+  /** Maximum of query limit */
+  maxQueryLimit: number;
 }
 
 /** Response containing configuration details */
