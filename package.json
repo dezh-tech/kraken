@@ -5,9 +5,10 @@
   "author": "zigBalthazar <zigBalthazar@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "build": "nest build",
     "build:prod": "tsc -p tsconfig.build.json",
     "start:dev": "ts-node src/main.ts",
-    "start:prod": "node dist/main.js",
+    "start:prod": "node dist/src/main.js",
     "new": "hygen new",
     "watch:dev": "ts-node-dev src/main.ts",
     "debug:dev": "cross-env TS_NODE_CACHE=false ts-node-dev --inspect --ignore '/^src/.*\\.spec\\.ts$/' src/main.ts",
