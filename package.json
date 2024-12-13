@@ -58,6 +58,7 @@
     "mongoose": "^8.8.4",
     "morgan": "^1.10.0",
     "nestjs-cls": "^3.6.0",
+    "nestjs-grpc-exceptions": "^0.2.2",
     "nestjs-i18n": "^10.4.0",
     "nostr-tools": "^2.10.4",
     "parse-duration": "^1.1.0",

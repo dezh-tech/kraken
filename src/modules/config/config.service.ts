@@ -24,7 +24,6 @@ export class ConfigService extends EventEmitter {
     }
 
     config.assign(props);
-
     const res = await this.nip11Repo.save(config);
 
     this.emit('NIP11-UPDATED', res);

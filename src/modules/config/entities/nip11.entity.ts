@@ -89,8 +89,44 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
     this.paymentsUrl = item.paymentsUrl ?? this.paymentsUrl;
     this.icon = item.icon ?? this.icon;
     this.url = item.url ?? this.url;
-    this.retention = item.retention ?? this.retention;
-    this.fees = item.fees ?? this.fees;
-    this.limitations = item.limitations ?? this.limitations;
+
+    // Handle Retention
+    this.retention = {
+      ...this.retention,
+      ...(item.retention ?? {}),
+      time: item.retention?.time ?? this.retention?.time,
+      count: item.retention?.count ?? this.retention?.count,
+      kinds: item.retention?.kinds ?? this.retention?.kinds,
+    };
+
+    // Handle Fees
+    this.fees = {
+      ...this.fees,
+      ...(item.fees ?? {}),
+      subscription: item.fees?.subscription ?? this.fees?.subscription,
+      publication: item.fees?.publication ?? this.fees?.publication,
+      admission: item.fees?.admission ?? this.fees?.admission,
+    };
+
+    // Handle Limitations
+    this.limitations = {
+      ...this.limitations,
+      ...(item.limitations ?? {}),
+      maxMessageLength: item.limitations?.maxMessageLength ?? this.limitations?.maxMessageLength,
+      maxSubscriptions: item.limitations?.maxSubscriptions ?? this.limitations?.maxSubscriptions,
+      maxFilters: item.limitations?.maxFilters ?? this.limitations?.maxFilters,
+      maxSubidLength: item.limitations?.maxSubidLength ?? this.limitations?.maxSubidLength,
+      minPowDifficulty: item.limitations?.minPowDifficulty ?? this.limitations?.minPowDifficulty,
+      authRequired: item.limitations?.authRequired ?? this.limitations?.authRequired,
+      paymentRequired: item.limitations?.paymentRequired ?? this.limitations?.paymentRequired,
+      restrictedWrites: item.limitations?.restrictedWrites ?? this.limitations?.restrictedWrites,
+      maxEventTags: item.limitations?.maxEventTags ?? this.limitations?.maxEventTags,
+      maxContentLength: item.limitations?.maxContentLength ?? this.limitations?.maxContentLength,
+      createdAtLowerLimit: item.limitations?.createdAtLowerLimit ?? this.limitations?.createdAtLowerLimit,
+      createdAtUpperLimit: item.limitations?.createdAtUpperLimit ?? this.limitations?.createdAtUpperLimit,
+      maxQueryLimit: item.limitations?.maxQueryLimit ?? this.limitations?.maxQueryLimit,
+      defaultQueryLimit: item.limitations?.defaultQueryLimit ?? this.limitations?.defaultQueryLimit,
+    };
   }
+
 }
