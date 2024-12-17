@@ -67,7 +67,7 @@ async function bootstrap() {
       },
       package: 'kraken',
       protoPath: configService.grpcConfig.protoPath,
-      url: `localhost:${configService.grpcConfig.port}`,
+      url: `0.0.0.0:${configService.grpcConfig.port}`,
     },
   });
 
