@@ -20,6 +20,10 @@ async function bootstrap() {
   });
   const configService = app.select(SharedModule).get(ApiConfigService);
 
+  if (configService.isProduction) {
+    app.useLogger(['log', 'warn', 'error']);
+  }
+
   // Middleware setup
   app.enableCors({
     origin: '*',

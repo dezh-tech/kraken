@@ -5,15 +5,15 @@ import type { OnModuleInit } from '@nestjs/common';
 import type { ClientGrpc, ClientOptions } from '@nestjs/microservices';
 import { Client, Transport } from '@nestjs/microservices';
 
-import type { ImmortalServiceClient } from './gen/ts/immortal';
-import { IMMORTAL_PACKAGE_NAME, IMMORTAL_SERVICE_NAME } from './gen/ts/immortal';
+import type { HealthServiceClient } from './gen/ts/immortal-health-service';
+import { HEALTH_SERVICE_NAME, IMMORTAL_PACKAGE_NAME } from './gen/ts/immortal-health-service';
 
 export class ImmortalGrpcClient implements OnModuleInit {
   static instance: ImmortalGrpcClient;
 
   private clientGrpc: ClientGrpc;
 
-  public serviceClient: ImmortalServiceClient;
+  public serviceClient: HealthServiceClient;
 
   constructor(
     private readonly url: string,
@@ -32,7 +32,7 @@ export class ImmortalGrpcClient implements OnModuleInit {
       options: {
         url: this.url,
         package: IMMORTAL_PACKAGE_NAME,
-        protoPath: path.join(__dirname, 'gen', 'immortal.proto'),
+        protoPath: path.join(__dirname, 'proto', 'immortal-health-service.proto'),
         credentials: this.isSecure ? ChannelCredentials.createSsl() : ChannelCredentials.createInsecure(),
       },
     };
@@ -41,6 +41,6 @@ export class ImmortalGrpcClient implements OnModuleInit {
   }
 
   onModuleInit() {
-    this.serviceClient = this.clientGrpc.getService<ImmortalServiceClient>(IMMORTAL_SERVICE_NAME);
+    this.serviceClient = this.clientGrpc.getService<HealthServiceClient>(HEALTH_SERVICE_NAME);
   }
 }
