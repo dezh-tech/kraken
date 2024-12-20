@@ -20,31 +20,34 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
   pubkey: string;
 
   @Column({ type: 'varchar' })
+  banner: string;
+
+  @Column({ type: 'varchar' })
   contact: string;
 
   @Column({ type: 'varchar' })
   software: string;
 
   @Column('simple-array')
-  supportedNips: number[];
+  supported_nips: number[];
 
   @Column({ type: 'varchar' })
   version: string;
 
   @Column('simple-array')
-  relayCountries: string[];
+  relay_countries: string[];
 
   @Column('simple-array')
-  languageTags: string[];
+  language_tags: string[];
 
   @Column('simple-array')
   tags: string[];
 
   @Column({ type: 'varchar', nullable: true })
-  postingPolicy: string;
+  posting_policy: string;
 
   @Column({ type: 'varchar', nullable: true })
-  paymentsUrl: string;
+  payments_url: string;
 
   @Column({ type: 'varchar', nullable: true })
   icon: string;
@@ -78,15 +81,16 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
     this.name = item.name ?? this.name;
     this.description = item.description ?? this.description;
     this.pubkey = item.pubkey ?? this.pubkey;
+    this.banner = item.banner ?? this.banner;
     this.contact = item.contact ?? this.contact;
     this.software = item.software ?? this.software;
-    this.supportedNips = item.supportedNips ?? this.supportedNips;
+    this.supported_nips = item.supported_nips ?? this.supported_nips;
     this.version = item.version ?? this.version;
-    this.relayCountries = item.relayCountries ?? this.relayCountries;
-    this.languageTags = item.languageTags ?? this.languageTags;
+    this.relay_countries = item.relay_countries ?? this.relay_countries;
+    this.language_tags = item.language_tags ?? this.language_tags;
     this.tags = item.tags ?? this.tags;
-    this.postingPolicy = item.postingPolicy ?? this.postingPolicy;
-    this.paymentsUrl = item.paymentsUrl ?? this.paymentsUrl;
+    this.posting_policy = item.posting_policy ?? this.posting_policy;
+    this.payments_url = item.payments_url ?? this.payments_url;
     this.icon = item.icon ?? this.icon;
     this.url = item.url ?? this.url;
 
@@ -112,20 +116,20 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
     this.limitations = {
       ...this.limitations,
       ...(item.limitations ?? {}),
-      maxMessageLength: item.limitations?.maxMessageLength ?? this.limitations?.maxMessageLength,
-      maxSubscriptions: item.limitations?.maxSubscriptions ?? this.limitations?.maxSubscriptions,
-      maxFilters: item.limitations?.maxFilters ?? this.limitations?.maxFilters,
-      maxSubidLength: item.limitations?.maxSubidLength ?? this.limitations?.maxSubidLength,
-      minPowDifficulty: item.limitations?.minPowDifficulty ?? this.limitations?.minPowDifficulty,
-      authRequired: item.limitations?.authRequired ?? this.limitations?.authRequired,
-      paymentRequired: item.limitations?.paymentRequired ?? this.limitations?.paymentRequired,
-      restrictedWrites: item.limitations?.restrictedWrites ?? this.limitations?.restrictedWrites,
-      maxEventTags: item.limitations?.maxEventTags ?? this.limitations?.maxEventTags,
-      maxContentLength: item.limitations?.maxContentLength ?? this.limitations?.maxContentLength,
-      createdAtLowerLimit: item.limitations?.createdAtLowerLimit ?? this.limitations?.createdAtLowerLimit,
-      createdAtUpperLimit: item.limitations?.createdAtUpperLimit ?? this.limitations?.createdAtUpperLimit,
-      maxQueryLimit: item.limitations?.maxQueryLimit ?? this.limitations?.maxQueryLimit,
-      defaultQueryLimit: item.limitations?.defaultQueryLimit ?? this.limitations?.defaultQueryLimit,
+      max_message_length: item.limitations?.max_message_length ?? this.limitations?.max_message_length,
+      max_subscriptions: item.limitations?.max_subscriptions ?? this.limitations?.max_subscriptions,
+      max_filters: item.limitations?.max_filters ?? this.limitations?.max_filters,
+      max_subid_length: item.limitations?.max_subid_length ?? this.limitations?.max_subid_length,
+      min_pow_difficulty: item.limitations?.min_pow_difficulty ?? this.limitations?.min_pow_difficulty,
+      auth_required: item.limitations?.auth_required ?? this.limitations?.auth_required,
+      payment_required: item.limitations?.payment_required ?? this.limitations?.payment_required,
+      restricted_writes: item.limitations?.restricted_writes ?? this.limitations?.restricted_writes,
+      max_event_tags: item.limitations?.max_event_tags ?? this.limitations?.max_event_tags,
+      max_content_length: item.limitations?.max_content_length ?? this.limitations?.max_content_length,
+      created_at_lower_limit: item.limitations?.created_at_lower_limit ?? this.limitations?.created_at_lower_limit,
+      created_at_upper_limit: item.limitations?.created_at_upper_limit ?? this.limitations?.created_at_upper_limit,
+      max_limit: item.limitations?.max_limit ?? this.limitations?.max_limit,
+      default_query_limit: item.limitations?.default_query_limit ?? this.limitations?.default_query_limit,
     };
   }
 

@@ -18,6 +18,10 @@ export class Nip11DTO extends AbstractDto {
 
   @ApiProperty()
   @IsString()
+  banner: string;
+
+  @ApiProperty()
+  @IsString()
   pubkey: string;
 
   @ApiProperty()
@@ -30,7 +34,7 @@ export class Nip11DTO extends AbstractDto {
 
   @ApiProperty({ type: [Number] })
   @IsArray()
-  supportedNips: number[];
+  supported_nips: number[];
 
   @ApiProperty()
   @IsString()
@@ -38,11 +42,11 @@ export class Nip11DTO extends AbstractDto {
 
   @ApiProperty({ type: [String] })
   @IsArray()
-  relayCountries: string[];
+  relay_countries: string[];
 
   @ApiProperty({ type: [String] })
   @IsArray()
-  languageTags: string[];
+  language_tags: string[];
 
   @ApiProperty({ type: [String] })
   @IsArray()
@@ -51,12 +55,12 @@ export class Nip11DTO extends AbstractDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  postingPolicy?: string;
+  posting_policy?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  paymentsUrl?: string;
+  payments_url?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
@@ -87,14 +91,15 @@ export class Nip11DTO extends AbstractDto {
     this.description = e.description;
     this.pubkey = e.pubkey;
     this.contact = e.contact;
+    this.banner = e.banner;
     this.software = e.software;
-    this.supportedNips = e.supportedNips;
+    this.supported_nips = e.supported_nips;
     this.version = e.version;
-    this.relayCountries = e.relayCountries;
-    this.languageTags = e.languageTags;
+    this.relay_countries = e.relay_countries;
+    this.language_tags = e.language_tags;
     this.tags = e.tags;
-    this.postingPolicy = e.postingPolicy;
-    this.paymentsUrl = e.paymentsUrl;
+    this.posting_policy = e.posting_policy;
+    this.payments_url = e.payments_url;
     this.icon = e.icon;
     this.url = e.url;
     this.retention = {
@@ -120,20 +125,20 @@ export class Nip11DTO extends AbstractDto {
     };
 
     this.limitations = {
-      authRequired: e.limitations?.authRequired,
-      maxMessageLength: e.limitations?.maxMessageLength,
-      maxSubidLength: e.limitations?.maxSubidLength,
-      maxFilters: e.limitations?.maxFilters,
-      maxSubscriptions: e.limitations?.maxSubscriptions,
-      minPowDifficulty: e.limitations?.minPowDifficulty,
-      paymentRequired: e.limitations?.paymentRequired,
-      restrictedWrites: e.limitations?.restrictedWrites,
-      maxEventTags: e.limitations?.maxEventTags,
-      maxContentLength: e.limitations?.maxContentLength,
-      createdAtLowerLimit: e.limitations?.createdAtLowerLimit,
-      createdAtUpperLimit: e.limitations?.createdAtUpperLimit,
-      defaultQueryLimit: e.limitations?.maxQueryLimit,
-      maxQueryLimit: e.limitations?.maxQueryLimit,
+      auth_required: e.limitations?.auth_required,
+      max_message_length: e.limitations?.max_message_length,
+      max_subid_length: e.limitations?.max_subid_length,
+      max_filters: e.limitations?.max_filters,
+      max_subscriptions: e.limitations?.max_subscriptions,
+      min_pow_difficulty: e.limitations?.min_pow_difficulty,
+      payment_required: e.limitations?.payment_required,
+      restricted_writes: e.limitations?.restricted_writes,
+      max_event_tags: e.limitations?.max_event_tags,
+      max_content_length: e.limitations?.max_content_length,
+      created_at_lower_limit: e.limitations?.created_at_lower_limit,
+      created_at_upper_limit: e.limitations?.created_at_upper_limit,
+      default_query_limit: e.limitations?.max_limit,
+      max_limit: e.limitations?.max_limit,
     };
   }
 }

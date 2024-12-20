@@ -1,12 +1,13 @@
 import * as crypto from 'node:crypto';
 
-import { Body, Controller, Delete, Headers, Param, Patch, Post, UnauthorizedException } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Headers, Param, Patch, Post, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
 import { SubscriptionGenerateCheckoutSessionDto } from './dto/subscription-generate-checkout-session.dto';
 import { SubscriptionsService } from './subscriptions.service';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import JwtAuthGuard from '../auth/guards/jwt-auth.guard';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
@@ -80,6 +81,8 @@ export class SubscriptionsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post('seedRedis')
   seedRedis() {
     return this.subscriptionService.seedRedis();

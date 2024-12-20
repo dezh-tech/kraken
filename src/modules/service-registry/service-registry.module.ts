@@ -7,11 +7,12 @@ import { ServiceRegistryEntity } from './entities/service-registry.entity';
 import { ServiceRegistryRepository } from './service-registry.repository';
 import ServiceRegistryService from './services/service-registry.service';
 import ServiceRegistryHealthCheckService from './services/service-registry-health-check.service';
+import { ImmortalGrpcClient } from '../grpc/immortal-grpc.client';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ServiceRegistryEntity])],
   controllers: [ServiceRegistryController, ServiceRegistryGrpcController],
-  providers: [ServiceRegistryService, ServiceRegistryRepository, ServiceRegistryHealthCheckService],
+  providers: [ServiceRegistryService, ServiceRegistryRepository, ServiceRegistryHealthCheckService, ImmortalGrpcClient],
   exports: [ServiceRegistryService],
 })
 export default class ServiceRegistryModule {}

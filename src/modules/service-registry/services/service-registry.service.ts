@@ -6,14 +6,12 @@ import { ApiConfigService } from '../../../../src/shared/services/api-config.ser
 import type RegisterServiceRegistryDto from '../dtos/service-registry-register.dto';
 import { ServiceRegistryEntity } from '../entities/service-registry.entity';
 import { ServiceRegistryRepository } from '../service-registry.repository';
+import { ImmortalGrpcClient } from 'src/modules/grpc/immortal-grpc.client';
 
 @Injectable()
 // eslint-disable-next-line unicorn/prefer-event-target
 export default class ServiceRegistryService extends EventEmitter {
-  constructor(
-    private readonly serviceRegistryRepository: ServiceRegistryRepository,
-    private readonly apiConfig: ApiConfigService,
-  ) {
+  constructor(private readonly serviceRegistryRepository: ServiceRegistryRepository) {
     super();
   }
 
@@ -35,7 +33,6 @@ export default class ServiceRegistryService extends EventEmitter {
   async findByToken(token: string) {
     return this.serviceRegistryRepository.findOne({ where: { token } });
   }
-
 
   generateApiKey(serviceType: string, region: string): string {
     const timestamp = Date.now().toString(36);

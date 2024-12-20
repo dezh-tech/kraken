@@ -6,57 +6,57 @@ import { AbstractDto } from '../../../common/dto/abstract.dto';
 export class LimitationDto {
   @ApiProperty()
   @IsInt()
-  maxMessageLength?: number;
+  max_message_length?: number;
 
   @ApiProperty()
   @IsInt()
-  maxSubscriptions?: number;
+  max_subscriptions?: number;
 
   @ApiProperty()
   @IsInt()
-  maxFilters?: number;
+  max_filters?: number;
 
   @ApiProperty()
   @IsInt()
-  maxSubidLength?: number;
+  max_subid_length?: number;
 
   @ApiProperty()
   @IsInt()
-  minPowDifficulty?: number;
+  min_pow_difficulty?: number;
 
   @ApiProperty()
   @IsBoolean()
-  authRequired?: boolean;
+  auth_required?: boolean;
 
   @ApiProperty()
   @IsBoolean()
-  paymentRequired?: boolean;
+  payment_required?: boolean;
 
   @ApiProperty()
   @IsBoolean()
-  restrictedWrites?: boolean;
+  restricted_writes?: boolean;
 
   @ApiProperty()
   @IsInt()
-  maxEventTags?: number;
+  max_event_tags?: number;
 
   @ApiProperty()
   @IsInt()
-  maxContentLength?: number;
+  max_content_length?: number;
 
   @ApiProperty()
   @IsInt()
-  createdAtLowerLimit?: number;
+  created_at_lower_limit?: number;
 
   @ApiProperty()
   @IsInt()
-  createdAtUpperLimit?: number;
+  created_at_upper_limit?: number;
 
   @ApiProperty()
   @IsInt()
-  maxQueryLimit?: number;
+  max_limit?: number;
 
   @ApiProperty()
   @IsInt()
-  defaultQueryLimit?: number;
+  default_query_limit?: number;
 }

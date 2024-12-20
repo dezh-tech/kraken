@@ -2,44 +2,44 @@ import { Column } from 'typeorm';
 
 export class LimitationEntity {
   @Column({ type: 'int' })
-  maxMessageLength?: number;
+  max_message_length?: number;
 
   @Column({ type: 'int' })
-  maxSubscriptions?: number;
+  max_subscriptions?: number;
 
   @Column({ type: 'int' })
-  maxFilters?: number;
+  max_filters?: number;
 
   @Column({ type: 'int' })
-  maxSubidLength?: number;
+  max_subid_length?: number;
 
   @Column({ type: 'int' })
-  minPowDifficulty?: number;
+  min_pow_difficulty?: number;
 
   @Column({ type: 'boolean' })
-  authRequired?: boolean;
+  auth_required?: boolean;
 
   @Column({ type: 'boolean' })
-  paymentRequired?: boolean;
+  payment_required?: boolean;
 
   @Column({ type: 'boolean' })
-  restrictedWrites?: boolean;
+  restricted_writes?: boolean;
 
   @Column({ type: 'int' })
-  maxEventTags?: number;
+  max_event_tags?: number;
 
   @Column({ type: 'int' })
-  maxContentLength?: number;
+  max_content_length?: number;
 
   @Column({ type: 'bigint' })
-  createdAtLowerLimit?: number;
+  created_at_lower_limit?: number;
 
   @Column({ type: 'bigint' })
-  createdAtUpperLimit?: number;
+  created_at_upper_limit?: number;
 
   @Column({ type: 'int' })
-  maxQueryLimit?: number;
+  max_limit?: number;
 
   @Column({ type: 'int' })
-  defaultQueryLimit?: number;
+  default_query_limit?: number;
 }

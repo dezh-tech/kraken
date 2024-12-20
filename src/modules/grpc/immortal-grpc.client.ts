@@ -1,27 +1,31 @@
 import path from 'node:path';
-
 import { ChannelCredentials } from '@grpc/grpc-js';
-import type { OnModuleInit } from '@nestjs/common';
-import type { ClientGrpc, ClientOptions } from '@nestjs/microservices';
-import { Client, Transport } from '@nestjs/microservices';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ClientGrpc, ClientOptions, ClientProxyFactory, Transport } from '@nestjs/microservices';
 
 import type { HealthServiceClient } from './gen/ts/immortal-health-service';
 import { HEALTH_SERVICE_NAME, IMMORTAL_PACKAGE_NAME } from './gen/ts/immortal-health-service';
 
+@Injectable()
 export class ImmortalGrpcClient implements OnModuleInit {
   static instance: ImmortalGrpcClient;
 
   private clientGrpc: ClientGrpc;
-
   public serviceClient: HealthServiceClient;
 
-  constructor(
-    private readonly url: string,
-    private readonly isSecure: boolean,
-  ) {
-    ImmortalGrpcClient.instance = this;
+  private isSecure = false;
+  private url = '';
 
-    if (this.url) {
+  constructor() {
+    ImmortalGrpcClient.instance = this;
+    this.initializeClient();
+  }
+
+  setUrl(url: string, isSecure = false): void {
+    if (this.url !== url) {
+      this.url = url;
+      this.isSecure = isSecure;
+
       this.initializeClient();
     }
   }
@@ -37,10 +41,11 @@ export class ImmortalGrpcClient implements OnModuleInit {
       },
     };
 
-    Client(clientOptions)(this, 'clientGrpc');
+    this.clientGrpc = ClientProxyFactory.create(clientOptions) as unknown as ClientGrpc;
+    this.serviceClient = this.clientGrpc.getService<HealthServiceClient>(HEALTH_SERVICE_NAME);
   }
 
-  onModuleInit() {
+  onModuleInit(): void {
     this.serviceClient = this.clientGrpc.getService<HealthServiceClient>(HEALTH_SERVICE_NAME);
   }
 }

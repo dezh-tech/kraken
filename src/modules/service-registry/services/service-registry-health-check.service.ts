@@ -19,6 +19,7 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
   constructor(
     private readonly serviceRegistryService: ServiceRegistryService,
     private readonly serviceRegistryRepository: ServiceRegistryRepository,
+    private readonly immortalGrpcClient: ImmortalGrpcClient,
   ) {
     this.serviceRegistryService.on('SERVICE_REGISTERED', (service: ServiceRegistryEntity) => {
       this.logger.log(`New service registered: ${service.type} (ID: ${service._id})`);
@@ -80,9 +81,9 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
       let isHealthy = false;
 
       if (service.type === ServiceType.RELAY) {
-        const client = new ImmortalGrpcClient(service.url, false);
+        this.immortalGrpcClient.setUrl(service.url)
 
-        const res = await lastValueFrom(client.serviceClient.status({}));
+        const res = await lastValueFrom(this.immortalGrpcClient.serviceClient.status({}));
 
         isHealthy = res.services.every((s) => s.status === Status.CONNECTED);
       }
