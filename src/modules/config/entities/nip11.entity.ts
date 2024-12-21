@@ -96,8 +96,6 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
 
     // Handle Retention
     this.retention = {
-      ...this.retention,
-      ...(item.retention ?? {}),
       time: item.retention?.time ?? this.retention?.time,
       count: item.retention?.count ?? this.retention?.count,
       kinds: item.retention?.kinds ?? this.retention?.kinds,
@@ -105,8 +103,6 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
 
     // Handle Fees
     this.fees = {
-      ...this.fees,
-      ...(item.fees ?? {}),
       subscription: item.fees?.subscription ?? this.fees?.subscription,
       publication: item.fees?.publication ?? this.fees?.publication,
       admission: item.fees?.admission ?? this.fees?.admission,
@@ -114,8 +110,6 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
 
     // Handle Limitations
     this.limitations = {
-      ...this.limitations,
-      ...(item.limitations ?? {}),
       max_message_length: item.limitations?.max_message_length ?? this.limitations?.max_message_length,
       max_subscriptions: item.limitations?.max_subscriptions ?? this.limitations?.max_subscriptions,
       max_filters: item.limitations?.max_filters ?? this.limitations?.max_filters,
@@ -132,5 +126,4 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
       default_query_limit: item.limitations?.default_query_limit ?? this.limitations?.default_query_limit,
     };
   }
-
 }

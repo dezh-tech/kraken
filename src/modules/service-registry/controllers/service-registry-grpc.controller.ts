@@ -21,7 +21,7 @@ export class ServiceRegistryGrpcController implements ServiceRegistryGrpcControl
     call: ServerUnaryCall<registerServiceRequest, registerServiceResponse>,
   ): Promise<registerServiceResponse> {
     try {
-      const { heartbeatDurationInSec, type, region } = request;
+      const { port, heartbeatDurationInSec, type, region } = request;
 
       const serviceTypeKey = ServiceTypeEnum[type];
 
@@ -29,7 +29,7 @@ export class ServiceRegistryGrpcController implements ServiceRegistryGrpcControl
         throw new Error(`Invalid service type: ${type}`);
       }
 
-      const callerIp = call.getPeer();
+      const callerIp = call.getPeer().split(':')[0] + ':' + port;
 
       const { token } = await this.serviceRegistryService.register({
         heartbeatDurationInSec,

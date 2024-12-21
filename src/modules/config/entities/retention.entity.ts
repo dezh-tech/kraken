@@ -1,12 +1,12 @@
 import { Column } from 'typeorm';
 
 export class RetentionEntity {
-  @Column()
+  @Column({ nullable: true })
   time?: number;
 
-  @Column()
+  @Column({ nullable: true })
   count?: number;
 
-  @Column()
+  @Column({ nullable: true })
   kinds?: number[];
 }

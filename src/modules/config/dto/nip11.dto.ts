@@ -1,11 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsOptional, IsString } from 'class-validator';
-
 import { AbstractDto } from '../../../common/dto/abstract.dto';
 import type { Nip11Entity } from '../entities/nip11.entity';
-import { FeesDto } from './fees.dto';
 import { RetentionDto } from './retention.dto';
 import { LimitationDto } from './limitation.dto';
+import { FeesDto } from './fees.dto';
 
 export class Nip11DTO extends AbstractDto {
   @ApiProperty()
@@ -87,58 +86,71 @@ export class Nip11DTO extends AbstractDto {
   constructor(e: Nip11Entity) {
     super(e);
 
-    this.name = e.name;
-    this.description = e.description;
-    this.pubkey = e.pubkey;
-    this.contact = e.contact;
-    this.banner = e.banner;
-    this.software = e.software;
-    this.supported_nips = e.supported_nips;
-    this.version = e.version;
-    this.relay_countries = e.relay_countries;
-    this.language_tags = e.language_tags;
-    this.tags = e.tags;
-    this.posting_policy = e.posting_policy;
-    this.payments_url = e.payments_url;
-    this.icon = e.icon;
-    this.url = e.url;
-    this.retention = {
-      count: e.retention?.count,
-      kinds: e.retention?.kinds,
-      time: e.retention?.time,
-    };
-    this.fees = {
-      admission: e.fees?.admission?.map((a) => ({
-        amount: a.amount,
-        unit: a.unit,
-      })),
-      publication: e.fees?.publication?.map((p) => ({
-        amount: p.amount,
-        kinds: p.kinds,
-        unit: p.unit,
-      })),
-      subscription: e.fees?.subscription?.map((s) => ({
-        amount: s.amount,
-        period: s.period,
-        unit: s.unit,
-      })),
-    };
+    this.name = e.name ?? undefined;
+    this.description = e.description ?? undefined;
+    this.banner = e.banner ?? undefined;
+    this.pubkey = e.pubkey ?? undefined;
+    this.contact = e.contact ?? undefined;
+    this.software = e.software ?? undefined;
+    this.supported_nips = e.supported_nips ?? undefined;
+    this.version = e.version ?? undefined;
+    this.relay_countries = e.relay_countries ?? undefined;
+    this.language_tags = e.language_tags ?? undefined;
+    this.tags = e.tags ?? undefined;
 
-    this.limitations = {
-      auth_required: e.limitations?.auth_required,
-      max_message_length: e.limitations?.max_message_length,
-      max_subid_length: e.limitations?.max_subid_length,
-      max_filters: e.limitations?.max_filters,
-      max_subscriptions: e.limitations?.max_subscriptions,
-      min_pow_difficulty: e.limitations?.min_pow_difficulty,
-      payment_required: e.limitations?.payment_required,
-      restricted_writes: e.limitations?.restricted_writes,
-      max_event_tags: e.limitations?.max_event_tags,
-      max_content_length: e.limitations?.max_content_length,
-      created_at_lower_limit: e.limitations?.created_at_lower_limit,
-      created_at_upper_limit: e.limitations?.created_at_upper_limit,
-      default_query_limit: e.limitations?.max_limit,
-      max_limit: e.limitations?.max_limit,
-    };
+    // Optional fields
+    this.posting_policy = e.posting_policy ?? undefined;
+    this.payments_url = e.payments_url ?? undefined;
+    this.icon = e.icon ?? undefined;
+    this.url = e.url ?? undefined;
+
+    // Handle Retention
+    this.retention = e.retention && (e.retention.count || e.retention.kinds || e.retention.time)
+      ? {
+          count: e.retention.count ?? undefined,
+          kinds: e.retention.kinds ?? undefined,
+          time: e.retention.time ?? undefined,
+        }
+      : undefined;
+
+    // Handle Fees
+    this.fees = e.fees && (e.fees.admission || e.fees.publication || e.fees.subscription)
+      ? {
+          admission: e.fees.admission?.map(a => ({
+            amount: a.amount ?? undefined,
+            unit: a.unit ?? undefined,
+          })),
+          publication: e.fees.publication?.map(p => ({
+            amount: p.amount ?? undefined,
+            kinds: p.kinds ?? undefined,
+            unit: p.unit ?? undefined,
+          })),
+          subscription: e.fees.subscription?.map(s => ({
+            amount: s.amount ?? undefined,
+            period: s.period ?? undefined,
+            unit: s.unit ?? undefined,
+          })),
+        }
+      : undefined;
+
+    // Handle Limitations
+    this.limitations = e.limitations
+      ? {
+          auth_required: e.limitations.auth_required ?? undefined,
+          max_message_length: e.limitations.max_message_length ?? undefined,
+          max_subid_length: e.limitations.max_subid_length ?? undefined,
+          max_filters: e.limitations.max_filters ?? undefined,
+          max_subscriptions: e.limitations.max_subscriptions ?? undefined,
+          min_pow_difficulty: e.limitations.min_pow_difficulty ?? undefined,
+          payment_required: e.limitations.payment_required ?? undefined,
+          restricted_writes: e.limitations.restricted_writes ?? undefined,
+          max_event_tags: e.limitations.max_event_tags ?? undefined,
+          max_content_length: e.limitations.max_content_length ?? undefined,
+          created_at_lower_limit: e.limitations.created_at_lower_limit ?? undefined,
+          created_at_upper_limit: e.limitations.created_at_upper_limit ?? undefined,
+          default_query_limit: e.limitations.max_limit ?? undefined,
+          max_limit: e.limitations.max_limit ?? undefined,
+        }
+      : undefined;
   }
 }
