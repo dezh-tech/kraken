@@ -1,45 +1,45 @@
 import { Column } from 'typeorm';
 
 export class LimitationEntity {
-  @Column({ type: 'int' })
-  max_message_length?: number;
+  @Column()
+  max_message_length?: number | null;
 
-  @Column({ type: 'int' })
-  max_subscriptions?: number;
+  @Column()
+  max_subscriptions?: number | null;
 
-  @Column({ type: 'int' })
-  max_filters?: number;
+  @Column()
+  max_filters?: number | null;
 
-  @Column({ type: 'int' })
-  max_subid_length?: number;
+  @Column()
+  max_subid_length?: number | null;
 
-  @Column({ type: 'int' })
-  min_pow_difficulty?: number;
+  @Column()
+  min_pow_difficulty?: number | null;
 
-  @Column({ type: 'boolean' })
-  auth_required?: boolean;
+  @Column()
+  auth_required?: boolean | null;
 
-  @Column({ type: 'boolean' })
-  payment_required?: boolean;
+  @Column()
+  payment_required?: boolean | null;
 
-  @Column({ type: 'boolean' })
-  restricted_writes?: boolean;
+  @Column()
+  restricted_writes?: boolean | null;
 
-  @Column({ type: 'int' })
-  max_event_tags?: number;
+  @Column()
+  max_event_tags?: number | null;
 
-  @Column({ type: 'int' })
-  max_content_length?: number;
+  @Column()
+  max_content_length?: number | null;
 
-  @Column({ type: 'bigint' })
-  created_at_lower_limit?: number;
+  @Column()
+  created_at_lower_limit?: number | null;
 
-  @Column({ type: 'bigint' })
-  created_at_upper_limit?: number;
+  @Column()
+  created_at_upper_limit?: number | null;
 
-  @Column({ type: 'int' })
-  max_limit?: number;
+  @Column()
+  max_limit?: number | null;
 
-  @Column({ type: 'int' })
-  default_query_limit?: number;
+  @Column()
+  default_query_limit?: number | null;
 }

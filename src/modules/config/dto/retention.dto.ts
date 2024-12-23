@@ -2,11 +2,11 @@ import { NumberFieldOptional } from '../../../../src/decorators';
 
 export class RetentionDto {
   @NumberFieldOptional()
-  time?: number;
+  time: number | null;
 
   @NumberFieldOptional()
-  count?: number;
+  count: number | null;
 
   @NumberFieldOptional({ isArray: true, each: true })
-  kinds?: number[];
+  kinds: number[][] | null;
 }

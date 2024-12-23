@@ -10,59 +10,59 @@ import { LimitationEntity } from './limitaion.entity';
 export class Nip11Entity extends AbstractEntity<Nip11DTO> {
   dtoClass = Nip11DTO;
 
-  @Column({ type: 'varchar' })
-  name: string;
+  @Column()
+  name: string | null;
 
-  @Column({ type: 'varchar' })
-  description: string;
+  @Column()
+  description: string | null;
 
-  @Column({ type: 'varchar' })
-  pubkey: string;
+  @Column()
+  pubkey: string | null;
 
-  @Column({ type: 'varchar' })
-  banner: string;
+  @Column()
+  banner: string | null;
 
-  @Column({ type: 'varchar' })
-  contact: string;
+  @Column()
+  contact: string | null;
 
-  @Column({ type: 'varchar' })
-  software: string;
+  @Column()
+  software: string | null;
 
-  @Column('simple-array')
-  supported_nips: number[];
+  @Column()
+  supported_nips: number[] | null;
 
-  @Column({ type: 'varchar' })
-  version: string;
+  @Column()
+  version: string | null;
 
-  @Column('simple-array')
-  relay_countries: string[];
+  @Column()
+  relay_countries: string[] | null;
 
-  @Column('simple-array')
-  language_tags: string[];
+  @Column()
+  language_tags: string[] | null;
 
-  @Column('simple-array')
-  tags: string[];
+  @Column()
+  tags: string[] | null;
 
-  @Column({ type: 'varchar', nullable: true })
-  posting_policy: string;
+  @Column()
+  posting_policy: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
-  payments_url: string;
+  @Column()
+  payments_url: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
-  icon: string;
+  @Column()
+  icon: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
-  url: string;
+  @Column()
+  url: string | null;
 
-  @Column({ type: 'json', nullable: true })
-  retention?: RetentionEntity;
+  @Column()
+  retention?: RetentionEntity[] | null;
 
-  @Column({ type: 'json', nullable: true })
-  fees?: FeesEntity;
+  @Column()
+  fees?: FeesEntity | null;
 
-  @Column({ type: 'json', nullable: true })
-  limitations?: LimitationEntity;
+  @Column()
+  limitations?: LimitationEntity | null;
 
   constructor(item?: Partial<Omit<Nip11Entity, 'id'>>) {
     super();
@@ -80,6 +80,7 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
 
     this.name = item.name ?? this.name;
     this.description = item.description ?? this.description;
+
     this.pubkey = item.pubkey ?? this.pubkey;
     this.banner = item.banner ?? this.banner;
     this.contact = item.contact ?? this.contact;
@@ -95,35 +96,29 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
     this.url = item.url ?? this.url;
 
     // Handle Retention
-    this.retention = {
-      time: item.retention?.time ?? this.retention?.time,
-      count: item.retention?.count ?? this.retention?.count,
-      kinds: item.retention?.kinds ?? this.retention?.kinds,
-    };
+    this.retention = item.retention ?? this.retention ?? null;
 
     // Handle Fees
-    this.fees = {
-      subscription: item.fees?.subscription ?? this.fees?.subscription,
-      publication: item.fees?.publication ?? this.fees?.publication,
-      admission: item.fees?.admission ?? this.fees?.admission,
-    };
+    this.fees = item.fees ?? this.fees ?? null;
 
     // Handle Limitations
     this.limitations = {
-      max_message_length: item.limitations?.max_message_length ?? this.limitations?.max_message_length,
-      max_subscriptions: item.limitations?.max_subscriptions ?? this.limitations?.max_subscriptions,
-      max_filters: item.limitations?.max_filters ?? this.limitations?.max_filters,
-      max_subid_length: item.limitations?.max_subid_length ?? this.limitations?.max_subid_length,
-      min_pow_difficulty: item.limitations?.min_pow_difficulty ?? this.limitations?.min_pow_difficulty,
-      auth_required: item.limitations?.auth_required ?? this.limitations?.auth_required,
-      payment_required: item.limitations?.payment_required ?? this.limitations?.payment_required,
-      restricted_writes: item.limitations?.restricted_writes ?? this.limitations?.restricted_writes,
-      max_event_tags: item.limitations?.max_event_tags ?? this.limitations?.max_event_tags,
-      max_content_length: item.limitations?.max_content_length ?? this.limitations?.max_content_length,
-      created_at_lower_limit: item.limitations?.created_at_lower_limit ?? this.limitations?.created_at_lower_limit,
-      created_at_upper_limit: item.limitations?.created_at_upper_limit ?? this.limitations?.created_at_upper_limit,
-      max_limit: item.limitations?.max_limit ?? this.limitations?.max_limit,
-      default_query_limit: item.limitations?.default_query_limit ?? this.limitations?.default_query_limit,
+      max_message_length: item.limitations?.max_message_length ?? this.limitations?.max_message_length ?? null,
+      max_subscriptions: item.limitations?.max_subscriptions ?? this.limitations?.max_subscriptions ?? null,
+      max_filters: item.limitations?.max_filters ?? this.limitations?.max_filters ?? null,
+      max_subid_length: item.limitations?.max_subid_length ?? this.limitations?.max_subid_length ?? null,
+      min_pow_difficulty: item.limitations?.min_pow_difficulty ?? this.limitations?.min_pow_difficulty ?? null,
+      auth_required: item.limitations?.auth_required ?? this.limitations?.auth_required ?? null,
+      payment_required: item.limitations?.payment_required ?? this.limitations?.payment_required ?? null,
+      restricted_writes: item.limitations?.restricted_writes ?? this.limitations?.restricted_writes ?? null,
+      max_event_tags: item.limitations?.max_event_tags ?? this.limitations?.max_event_tags ?? null,
+      max_content_length: item.limitations?.max_content_length ?? this.limitations?.max_content_length ?? null,
+      created_at_lower_limit:
+        item.limitations?.created_at_lower_limit ?? this.limitations?.created_at_lower_limit ?? null,
+      created_at_upper_limit:
+        item.limitations?.created_at_upper_limit ?? this.limitations?.created_at_upper_limit ?? null,
+      max_limit: item.limitations?.max_limit ?? this.limitations?.max_limit ?? null,
+      default_query_limit: item.limitations?.default_query_limit ?? this.limitations?.default_query_limit ?? null,
     };
   }
 }

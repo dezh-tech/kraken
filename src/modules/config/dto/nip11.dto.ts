@@ -9,47 +9,47 @@ import { FeesDto } from './fees.dto';
 export class Nip11DTO extends AbstractDto {
   @ApiProperty()
   @IsString()
-  name: string;
+  name?: string;
 
   @ApiProperty()
   @IsString()
-  description: string;
+  description?: string;
 
   @ApiProperty()
   @IsString()
-  banner: string;
+  banner?: string;
 
   @ApiProperty()
   @IsString()
-  pubkey: string;
+  pubkey?: string;
 
   @ApiProperty()
   @IsString()
-  contact: string;
+  contact?: string;
 
   @ApiProperty()
   @IsString()
-  software: string;
+  software?: string;
 
   @ApiProperty({ type: [Number] })
   @IsArray()
-  supported_nips: number[];
+  supported_nips?: number[];
 
   @ApiProperty()
   @IsString()
-  version: string;
+  version?: string;
 
   @ApiProperty({ type: [String] })
   @IsArray()
-  relay_countries: string[];
+  relay_countries?: string[];
 
   @ApiProperty({ type: [String] })
   @IsArray()
-  language_tags: string[];
+  language_tags?: string[];
 
   @ApiProperty({ type: [String] })
   @IsArray()
-  tags: string[];
+  tags?: string[];
 
   @ApiProperty({ required: false })
   @IsOptional()
@@ -71,9 +71,9 @@ export class Nip11DTO extends AbstractDto {
   @IsString()
   url?: string;
 
-  @ApiProperty({ type: () => RetentionDto, required: false })
+  @ApiProperty({ type: () => [RetentionDto], required: false })
   @IsOptional()
-  retention?: RetentionDto;
+  retention?: RetentionDto[];
 
   @ApiProperty({ type: () => FeesDto, required: false })
   @IsOptional()
@@ -105,33 +105,30 @@ export class Nip11DTO extends AbstractDto {
     this.url = e.url ?? undefined;
 
     // Handle Retention
-    this.retention = e.retention && (e.retention.count || e.retention.kinds || e.retention.time)
-      ? {
-          count: e.retention.count ?? undefined,
-          kinds: e.retention.kinds ?? undefined,
-          time: e.retention.time ?? undefined,
-        }
-      : undefined;
+    if (e.retention) {
+      this.retention = e.retention ?? undefined
+    }
 
     // Handle Fees
-    this.fees = e.fees && (e.fees.admission || e.fees.publication || e.fees.subscription)
-      ? {
-          admission: e.fees.admission?.map(a => ({
-            amount: a.amount ?? undefined,
-            unit: a.unit ?? undefined,
-          })),
-          publication: e.fees.publication?.map(p => ({
-            amount: p.amount ?? undefined,
-            kinds: p.kinds ?? undefined,
-            unit: p.unit ?? undefined,
-          })),
-          subscription: e.fees.subscription?.map(s => ({
-            amount: s.amount ?? undefined,
-            period: s.period ?? undefined,
-            unit: s.unit ?? undefined,
-          })),
-        }
-      : undefined;
+    this.fees =
+      e.fees && (e.fees.admission ?? e.fees.publication ?? e.fees.subscription)
+        ? {
+            admission: e.fees.admission?.map((a) => ({
+              amount: a.amount,
+              unit: a.unit,
+            })),
+            publication: e.fees.publication?.map((p) => ({
+              amount: p.amount,
+              kinds: p.kinds,
+              unit: p.unit,
+            })),
+            subscription: e.fees.subscription?.map((s) => ({
+              amount: s.amount,
+              period: s.period,
+              unit: s.unit,
+            })),
+          }
+        : undefined;
 
     // Handle Limitations
     this.limitations = e.limitations

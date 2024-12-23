@@ -32,11 +32,11 @@ export class AdmissionEntity {
 
 export class FeesEntity {
   @Column({ nullable: true })
-  subscription?: SubscriptionEntity[];
+  subscription?: SubscriptionEntity[] | null;
 
   @Column({ nullable: true })
-  publication?: PublicationEntity[];
+  publication?: PublicationEntity[] | null;
 
   @Column({ nullable: true })
-  admission?: AdmissionEntity[];
+  admission?: AdmissionEntity[] | null;
 }
