@@ -145,7 +145,7 @@ export class Nip11DTO extends AbstractDto {
           max_content_length: e.limitations.max_content_length ?? undefined,
           created_at_lower_limit: e.limitations.created_at_lower_limit ?? undefined,
           created_at_upper_limit: e.limitations.created_at_upper_limit ?? undefined,
-          default_query_limit: e.limitations.max_limit ?? undefined,
+          default_query_limit: e.limitations.default_query_limit ?? undefined,
           max_limit: e.limitations.max_limit ?? undefined,
         }
       : undefined;
