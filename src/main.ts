@@ -12,6 +12,7 @@ import { AppModule } from './app.module';
 import { setupSwagger } from './setup-swagger';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { SharedModule } from './shared/shared.module';
+import { MANAGER_V1_PACKAGE_NAME } from './modules/grpc/gen/ts/config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(), {
@@ -69,7 +70,7 @@ async function bootstrap() {
       onLoadPackageDefinition: (pkg, server) => {
         new ReflectionService(pkg).addToServer(server);
       },
-      package: 'kraken',
+      package: MANAGER_V1_PACKAGE_NAME,
       protoPath: configService.grpcConfig.protoPath,
       url: `0.0.0.0:${configService.grpcConfig.port}`,
     },

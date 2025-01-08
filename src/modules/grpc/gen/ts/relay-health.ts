@@ -2,14 +2,14 @@
 // versions:
 //   protoc-gen-ts_proto  v2.2.7
 //   protoc               v3.12.4
-// source: immortal-health-service.proto
+// source: relay-health.proto
 
 /* eslint-disable */
 import { Metadata } from "@grpc/grpc-js";
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 
-export const protobufPackage = "immortal";
+export const protobufPackage = "relay.v1";
 
 export enum Status {
   UNKNOWN = 0,
@@ -33,7 +33,7 @@ export interface StatusResponse {
   version: string;
 }
 
-export const IMMORTAL_PACKAGE_NAME = "immortal";
+export const RELAY_V1_PACKAGE_NAME = "relay.v1";
 
 export interface HealthServiceClient {
   status(request: StatusRequest, metadata?: Metadata): Observable<StatusResponse>;

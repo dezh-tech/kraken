@@ -2,13 +2,13 @@ import type { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 
-import { Status } from '../../../../src/modules/grpc/gen/ts/immortal-health-service';
 import { ImmortalGrpcClient } from '../../../../src/modules/grpc/immortal-grpc.client';
 import type { ServiceRegistryEntity } from '../entities/service-registry.entity';
 import { ServiceStatus } from '../enums/service-status.enum';
 import { ServiceType } from '../enums/service-types.enum';
 import { ServiceRegistryRepository } from '../service-registry.repository';
 import ServiceRegistryService from './service-registry.service';
+import { Status } from '../../../../src/modules/grpc/gen/ts/relay-health';
 
 @Injectable()
 export default class ServiceRegistryHealthCheckService implements OnModuleInit, OnModuleDestroy {

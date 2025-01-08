@@ -2,9 +2,8 @@ import path from 'node:path';
 import { ChannelCredentials } from '@grpc/grpc-js';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc, ClientOptions, ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { HEALTH_SERVICE_NAME, HealthServiceClient, RELAY_V1_PACKAGE_NAME } from './gen/ts/relay-health';
 
-import type { HealthServiceClient } from './gen/ts/immortal-health-service';
-import { HEALTH_SERVICE_NAME, IMMORTAL_PACKAGE_NAME } from './gen/ts/immortal-health-service';
 
 @Injectable()
 export class ImmortalGrpcClient implements OnModuleInit {
@@ -35,8 +34,8 @@ export class ImmortalGrpcClient implements OnModuleInit {
       transport: Transport.GRPC,
       options: {
         url: this.url,
-        package: IMMORTAL_PACKAGE_NAME,
-        protoPath: path.join(__dirname, 'proto', 'immortal-health-service.proto'),
+        package: RELAY_V1_PACKAGE_NAME,
+        protoPath: path.join(__dirname, 'proto', 'relay-health.proto'),
         credentials: this.isSecure ? ChannelCredentials.createSsl() : ChannelCredentials.createInsecure(),
       },
     };

@@ -3,9 +3,8 @@ import { Controller } from '@nestjs/common';
 
 import ServiceRegistryService from '../../../../src/modules/service-registry/services/service-registry.service';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
-import type { addLogRequest, addLogResponse, LogController } from '../../grpc/gen/ts/kraken';
-import { LogControllerMethods } from '../../grpc/gen/ts/kraken';
 import { LogService } from '../log.service';
+import { AddLogRequest, AddLogResponse, LogController, LogControllerMethods } from '../../../../src/modules/grpc/gen/ts/log';
 
 @Controller()
 @LogControllerMethods()
@@ -16,7 +15,7 @@ export class LogGrpcController implements LogController {
     private readonly serviceRegistryService: ServiceRegistryService,
   ) {}
 
-  async addLog(request: addLogRequest, metadata?: Metadata): Promise<addLogResponse> {
+  async addLog(request: AddLogRequest, metadata?: Metadata): Promise<AddLogResponse> {
     try {
       const token = metadata?.getMap().token?.toString();
 

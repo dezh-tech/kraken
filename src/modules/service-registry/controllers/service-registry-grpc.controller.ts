@@ -2,10 +2,14 @@ import type { ServerUnaryCall, Metadata } from '@grpc/grpc-js';
 import { Controller } from '@nestjs/common';
 
 import { ApiConfigService } from '../../../../src/shared/services/api-config.service';
-import type { registerServiceRequest, registerServiceResponse } from '../../grpc/gen/ts/kraken';
-import { ServiceRegistryControllerMethods, ServiceTypeEnum } from '../../grpc/gen/ts/kraken';
 import { ServiceType } from '../enums/service-types.enum';
 import ServiceRegistryService from '../services/service-registry.service';
+import {
+  RegisterServiceRequest,
+  RegisterServiceResponse,
+  ServiceRegistryControllerMethods,
+  ServiceTypeEnum,
+} from '../../../../src/modules/grpc/gen/ts/service_registry';
 
 @Controller()
 @ServiceRegistryControllerMethods()
@@ -16,10 +20,10 @@ export class ServiceRegistryGrpcController implements ServiceRegistryGrpcControl
   ) {}
 
   async registerService(
-    request: registerServiceRequest,
+    request: RegisterServiceRequest,
     _metadata: Metadata,
-    call: ServerUnaryCall<registerServiceRequest, registerServiceResponse>,
-  ): Promise<registerServiceResponse> {
+    call: ServerUnaryCall<RegisterServiceRequest, RegisterServiceResponse>,
+  ): Promise<RegisterServiceResponse> {
     try {
       const { port, heartbeatDurationInSec, type, region } = request;
 

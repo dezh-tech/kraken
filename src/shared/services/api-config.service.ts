@@ -107,7 +107,11 @@ export class ApiConfigService {
   get grpcConfig() {
     return {
       port: this.getString('GRPC_PORT'),
-      protoPath: join(__dirname, '..', '..', 'modules', 'grpc', 'proto', 'kraken.proto'),
+      protoPath: [
+        join(__dirname, '..', '..', 'modules', 'grpc', 'proto', 'config.proto'),
+        join(__dirname, '..', '..', 'modules', 'grpc', 'proto', 'log.proto'),
+        join(__dirname, '..', '..', 'modules', 'grpc', 'proto', 'service_registry.proto'),
+      ],
     };
   }
 

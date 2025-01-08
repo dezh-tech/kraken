@@ -1,18 +1,17 @@
 import { Controller, UseInterceptors } from '@nestjs/common';
 
-import type { ConfigController, EmptyRequest, getConfigResponse } from '../../../../src/modules/grpc/gen/ts/kraken';
-import { ConfigControllerMethods } from '../../../../src/modules/grpc/gen/ts/kraken';
 import { GrpcInvalidArgumentException, GrpcToHttpInterceptor } from 'nestjs-grpc-exceptions';
 import { ConfigService } from '../config.service';
 import { Metadata } from '@grpc/grpc-js';
+import { GetParametersRequest, GetParametersResponse, ParametersController, ParametersControllerMethods } from '../../../../src/modules/grpc/gen/ts/config';
 
 @Controller()
-@ConfigControllerMethods()
+@ParametersControllerMethods()
 @UseInterceptors(GrpcToHttpInterceptor)
-export class ConfigGrpcController implements ConfigController {
+export class ConfigGrpcController implements ParametersController {
   constructor(private readonly configService: ConfigService) {}
 
-  async getConfig(_request: EmptyRequest, _metadata?: Metadata): Promise<getConfigResponse> {
+  async getParameters(_request: GetParametersRequest, _metadata?: Metadata): Promise<GetParametersResponse> {
     const token = _metadata?.get('x-identifier')?.[0] as string | undefined;
     if (!token) {
       throw new GrpcInvalidArgumentException("input 'x-identifier' is not valid.");
@@ -37,6 +36,6 @@ export class ConfigGrpcController implements ConfigController {
         defaultQueryLimit: limitations?.default_query_limit,
         maxQueryLimit: limitations?.max_limit,
       },
-    } as getConfigResponse;
+    } as GetParametersResponse;
   }
 }
