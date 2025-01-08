@@ -62,7 +62,7 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
   fees?: FeesEntity | null;
 
   @Column()
-  limitations?: LimitationEntity | null;
+  limitation?: LimitationEntity | null;
 
   constructor(item?: Partial<Omit<Nip11Entity, 'id'>>) {
     super();
@@ -101,24 +101,24 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
     // Handle Fees
     this.fees = item.fees ?? this.fees ?? null;
 
-    // Handle Limitations
-    this.limitations = {
-      max_message_length: item.limitations?.max_message_length ?? this.limitations?.max_message_length ?? null,
-      max_subscriptions: item.limitations?.max_subscriptions ?? this.limitations?.max_subscriptions ?? null,
-      max_filters: item.limitations?.max_filters ?? this.limitations?.max_filters ?? null,
-      max_subid_length: item.limitations?.max_subid_length ?? this.limitations?.max_subid_length ?? null,
-      min_pow_difficulty: item.limitations?.min_pow_difficulty ?? this.limitations?.min_pow_difficulty ?? null,
-      auth_required: item.limitations?.auth_required ?? this.limitations?.auth_required ?? null,
-      payment_required: item.limitations?.payment_required ?? this.limitations?.payment_required ?? null,
-      restricted_writes: item.limitations?.restricted_writes ?? this.limitations?.restricted_writes ?? null,
-      max_event_tags: item.limitations?.max_event_tags ?? this.limitations?.max_event_tags ?? null,
-      max_content_length: item.limitations?.max_content_length ?? this.limitations?.max_content_length ?? null,
+    // Handle Limitation
+    this.limitation = {
+      max_message_length: item.limitation?.max_message_length ?? this.limitation?.max_message_length ?? null,
+      max_subscriptions: item.limitation?.max_subscriptions ?? this.limitation?.max_subscriptions ?? null,
+      max_filters: item.limitation?.max_filters ?? this.limitation?.max_filters ?? null,
+      max_subid_length: item.limitation?.max_subid_length ?? this.limitation?.max_subid_length ?? null,
+      min_pow_difficulty: item.limitation?.min_pow_difficulty ?? this.limitation?.min_pow_difficulty ?? null,
+      auth_required: item.limitation?.auth_required ?? this.limitation?.auth_required ?? null,
+      payment_required: item.limitation?.payment_required ?? this.limitation?.payment_required ?? null,
+      restricted_writes: item.limitation?.restricted_writes ?? this.limitation?.restricted_writes ?? null,
+      max_event_tags: item.limitation?.max_event_tags ?? this.limitation?.max_event_tags ?? null,
+      max_content_length: item.limitation?.max_content_length ?? this.limitation?.max_content_length ?? null,
       created_at_lower_limit:
-        item.limitations?.created_at_lower_limit ?? this.limitations?.created_at_lower_limit ?? null,
+        item.limitation?.created_at_lower_limit ?? this.limitation?.created_at_lower_limit ?? null,
       created_at_upper_limit:
-        item.limitations?.created_at_upper_limit ?? this.limitations?.created_at_upper_limit ?? null,
-      max_limit: item.limitations?.max_limit ?? this.limitations?.max_limit ?? null,
-      default_query_limit: item.limitations?.default_query_limit ?? this.limitations?.default_query_limit ?? null,
+        item.limitation?.created_at_upper_limit ?? this.limitation?.created_at_upper_limit ?? null,
+      max_limit: item.limitation?.max_limit ?? this.limitation?.max_limit ?? null,
+      default_query_limit: item.limitation?.default_query_limit ?? this.limitation?.default_query_limit ?? null,
     };
   }
 }

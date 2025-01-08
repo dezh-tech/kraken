@@ -16,7 +16,7 @@ export class ConfigGrpcController implements ParametersController {
     if (!token) {
       throw new GrpcInvalidArgumentException("input 'x-identifier' is not valid.");
     }
-    const { url, limitations } = await this.configService.getNip11();
+    const { url, limitation: limitations } = await this.configService.getNip11();
 
     return {
       url,

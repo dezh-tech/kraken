@@ -81,7 +81,7 @@ export class Nip11DTO extends AbstractDto {
 
   @ApiProperty({ type: () => LimitationDto, required: false })
   @IsOptional()
-  limitations?: LimitationDto;
+  limitation?: LimitationDto;
 
   constructor(e: Nip11Entity) {
     super(e);
@@ -130,23 +130,23 @@ export class Nip11DTO extends AbstractDto {
           }
         : undefined;
 
-    // Handle Limitations
-    this.limitations = e.limitations
+    // Handle Limitation
+    this.limitation = e.limitation
       ? {
-          auth_required: e.limitations.auth_required ?? undefined,
-          max_message_length: e.limitations.max_message_length ?? undefined,
-          max_subid_length: e.limitations.max_subid_length ?? undefined,
-          max_filters: e.limitations.max_filters ?? undefined,
-          max_subscriptions: e.limitations.max_subscriptions ?? undefined,
-          min_pow_difficulty: e.limitations.min_pow_difficulty ?? undefined,
-          payment_required: e.limitations.payment_required ?? undefined,
-          restricted_writes: e.limitations.restricted_writes ?? undefined,
-          max_event_tags: e.limitations.max_event_tags ?? undefined,
-          max_content_length: e.limitations.max_content_length ?? undefined,
-          created_at_lower_limit: e.limitations.created_at_lower_limit ?? undefined,
-          created_at_upper_limit: e.limitations.created_at_upper_limit ?? undefined,
-          default_query_limit: e.limitations.default_query_limit ?? undefined,
-          max_limit: e.limitations.max_limit ?? undefined,
+          auth_required: e.limitation.auth_required ?? undefined,
+          max_message_length: e.limitation.max_message_length ?? undefined,
+          max_subid_length: e.limitation.max_subid_length ?? undefined,
+          max_filters: e.limitation.max_filters ?? undefined,
+          max_subscriptions: e.limitation.max_subscriptions ?? undefined,
+          min_pow_difficulty: e.limitation.min_pow_difficulty ?? undefined,
+          payment_required: e.limitation.payment_required ?? undefined,
+          restricted_writes: e.limitation.restricted_writes ?? undefined,
+          max_event_tags: e.limitation.max_event_tags ?? undefined,
+          max_content_length: e.limitation.max_content_length ?? undefined,
+          created_at_lower_limit: e.limitation.created_at_lower_limit ?? undefined,
+          created_at_upper_limit: e.limitation.created_at_upper_limit ?? undefined,
+          default_query_limit: e.limitation.default_query_limit ?? undefined,
+          max_limit: e.limitation.max_limit ?? undefined,
         }
       : undefined;
   }
