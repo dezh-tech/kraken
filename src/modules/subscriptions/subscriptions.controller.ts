@@ -88,11 +88,15 @@ export class SubscriptionsController {
     return this.subscriptionService.seedRedis();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   updateSubscription(@Param('id') id: string, @Body() props: UpdateSubscriptionDto) {
     return this.subscriptionService.updateSubscription(id, props);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   deleteSubscription(@Param('id') id: string) {
     return this.subscriptionService.deleteSubscription(id);
