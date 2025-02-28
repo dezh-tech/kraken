@@ -9,9 +9,6 @@ export class SubscriptionDto extends AbstractDto {
   @StringField()
   subscriber: string;
 
-  @StringField()
-  checkoutSessionId: string;
-
   @NumberField()
   startDate: number;
 
@@ -21,10 +18,4 @@ export class SubscriptionDto extends AbstractDto {
   @ApiProperty()
   @IsEnum(() => SubscriptionStatusEnum)
   status: SubscriptionStatusEnum;
-
-  @NumberField()
-  totalAmount: number;
-
-  @StringField()
-  unit: string;
 }

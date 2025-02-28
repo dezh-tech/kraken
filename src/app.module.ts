@@ -14,6 +14,7 @@ import ServiceRegistryModule from './modules/service-registry/service-registry.m
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { UserModule } from './modules/users/user.module';
 import { SharedModule } from './shared/shared.module';
+import { InvoiceModule } from './modules/invoices/invoice.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { SharedModule } from './shared/shared.module';
     ServicesConfigModule,
     SubscriptionsModule,
     LogModule,
+    InvoiceModule,
   ],
   controllers: [],
   providers: [],

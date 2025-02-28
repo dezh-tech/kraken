@@ -94,6 +94,7 @@ export class ApiConfigService {
       logging: this.getBoolean('ENABLE_ORM_LOGS'),
       connectTimeoutMS: this.getNumber('MONGO_DB_CONNECTION_TIMEOUT_IN_MS'),
       entities,
+      logger: 'debug',
     };
   }
 

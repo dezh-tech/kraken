@@ -6,8 +6,12 @@ import Redis from 'ioredis';
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
 import { ConfigService } from '../config/config.service';
 import { SubscriptionRepository } from './subscriptions.repository';
-import { MoreThan, ObjectId } from 'typeorm';
+import { ObjectId } from 'typeorm';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { SubscriptionStatusEnum } from './enums/subscription-status.enum';
+import { InvoiceService } from '../invoices/invoice.service';
+import { InvoiceStatusEnum } from '../invoices/enums/invoice-status.enum';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class SubscriptionsService {
@@ -20,9 +24,10 @@ export class SubscriptionsService {
     private readonly apiConfig: ApiConfigService,
     private readonly subscriptionRepository: SubscriptionRepository,
     private readonly configService: ConfigService,
+    private readonly InvoiceService: InvoiceService,
   ) {}
 
-  async generateCheckoutSession(npub: string) {
+  async generateCheckoutSession(pubkey: string, planId: string) {
     // if (!/^npub1([A-HJ-NP-Z0-9]{32})$/.test(npub)) {
     //   throw new BadRequestException('invalid npub provided.');
     // }
@@ -36,65 +41,101 @@ export class SubscriptionsService {
 
     const config = await this.configService.getNip11();
 
-    if (!config?.fees) {
+    const isSubscriptionPlanExist = config && config.fees && (config.fees.subscription ?? []).length > 0;
+    if (!isSubscriptionPlanExist) {
+      throw new NotFoundException('subscription plan not found.');
+    }
+
+    const subscription = config.fees?.subscription?.find((s) => s.period === Number(planId));
+
+    if (!subscription) {
       throw new NotFoundException('subscription plan not found.');
     }
 
     const data = {
-      currency: config.fees.subscription ? config.fees.subscription[0]?.unit : 'SATS',
-      amount: config.fees.subscription ? config.fees.subscription[0]?.amount : 0,
+      currency: subscription?.unit,
+      amount: subscription?.amount,
       payment_methods: ['lightning'],
       amount_paid_tolerance: 1,
-      metadata: { npub },
+      metadata: { pubkey, planId },
     };
 
-    try {
-      const response = await axios.post(this.apiUrl, data, { headers });
+    let checkoutSessionUrl: string;
 
-      return response.data;
+    try {
+      checkoutSessionUrl = (await axios.post(this.apiUrl, data, { headers })).data.url;
     } catch (error) {
       console.error('Error generating checkout session:', error.response?.data || error.message);
 
       throw new Error('Could not generate checkout session');
     }
+
+    return checkoutSessionUrl;
   }
 
   async CheckoutSessionCompleteHandler(
     checkoutSessionId: string,
-    subscriber: string,
+    pubkey: string,
+    planId: string,
     totalAmount: number,
     unit: string,
   ) {
     const config = await this.configService.getNip11();
 
-    if (!config?.fees) {
-      throw new NotFoundException('Subscription plan not found.');
+    const isSubscriptionPlanExist = config && config.fees && (config.fees.subscription ?? []).length > 0;
+    if (!isSubscriptionPlanExist) {
+      throw new NotFoundException('subscription plan not found.');
     }
 
-    const startDate = Date.now();
-    const period = config.fees.subscription ? config.fees.subscription[0]?.period : null;
-    const endDate = startDate + (period ?? 86_400) * 1000;
+    const subscription = config.fees?.subscription?.find((s) => s.period === Number(planId));
 
-    const sub = this.subscriptionRepository.create({
-      checkoutSessionId,
-      subscriber,
-      totalAmount,
-      unit,
-      startDate,
-      endDate,
+    if (!subscription) {
+      throw new NotFoundException('subscription plan not found.');
+    }
+
+    const a = await this.subscriptionRepository.findOne({
+      where: {
+        subscriber: pubkey,
+        status: SubscriptionStatusEnum.ACTIVE,
+      },
     });
 
-    await this.redis.call('CF.ADD', 'SUBSCRIPTIONS', subscriber);
+    if (a) {
+      const period = subscription.period;
+      a.endDate = a.endDate + period;
 
-    await this.subscriptionRepository.save(sub);
+      await this.subscriptionRepository.save(a);
+    } else {
+      const startDate = Math.floor(Date.now() / 1000); // sec
+      const period = subscription.period; // sec
+      const endDate = startDate + period;
+
+      const sub = this.subscriptionRepository.create({
+        subscriber: pubkey,
+        startDate,
+        endDate,
+        status: SubscriptionStatusEnum.ACTIVE,
+      });
+
+      await this.redis.call('CF.ADD', 'SUBSCRIPTIONS', pubkey);
+
+      await this.subscriptionRepository.save(sub);
+    }
+
+    await this.InvoiceService.create({
+      status: InvoiceStatusEnum.PAID,
+      checkoutSessionId,
+      totalAmount,
+      unit,
+    });
   }
 
   async seedRedis() {
     try {
-      const now = Date.now();
+      const now = Math.floor(Date.now() / 1000); // sec
       const subscriptions = await this.subscriptionRepository.findAll({
         where: {
-          endDate: MoreThan(now),
+          endDate: { $gt: now },
         },
       });
 
@@ -144,5 +185,65 @@ export class SubscriptionsService {
     await this.subscriptionRepository.delete(id);
 
     await this.redis.call('CF.DEL', 'SUBSCRIPTIONS', s.subscriber);
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT) // Runs once every day at midnight
+  async removeExpiredSubscriptions() {
+    this.logger.log('Running daily cleanup of expired subscriptions...');
+
+    try {
+      const now = Math.floor(Date.now() / 1000); // sec
+
+      const expiredSubscriptions = await this.subscriptionRepository.findAll({
+        where: {
+          endDate: {
+            $lte: now,
+          },
+        },
+      });
+
+      if (expiredSubscriptions.length === 0) {
+        this.logger.log('No expired subscriptions to remove.');
+        return;
+      }
+
+      this.logger.log(`Removing ${expiredSubscriptions.length} expired subscriptions...`);
+
+      const pipeline = this.redis.pipeline();
+
+      for (const sub of expiredSubscriptions) {
+        pipeline.call('CF.DEL', 'SUBSCRIPTIONS', sub.subscriber);
+      }
+
+      await pipeline.exec();
+
+      for await (const { _id } of expiredSubscriptions) {
+        await this.updateSubscription(_id.toString(), {
+          status: SubscriptionStatusEnum.EXPIRED,
+        });
+      }
+
+      this.logger.log(`Successfully removed ${expiredSubscriptions.length} expired subscriptions.`);
+    } catch (error) {
+      this.logger.error('Error while removing expired subscriptions.', error.stack);
+    }
+  }
+
+  async getRemainingOfSubscription(pubkey: string) {
+    const now = Math.floor(Date.now() / 1000); // Convert to seconds
+
+    const sub = await this.subscriptionRepository.findOne({
+      where: {
+        subscriber: pubkey,
+        endDate: { $gt: now },
+        status: SubscriptionStatusEnum.ACTIVE,
+      },
+    });
+
+    if (!sub) {
+      return 0;
+    }
+
+    return sub.endDate - now;
   }
 }

@@ -8,26 +8,17 @@ import { SubscriptionStatusEnum } from '../enums/subscription-status.enum';
 export class SubscriptionEntity extends AbstractEntity<SubscriptionDto> {
   dtoClass = SubscriptionDto;
 
-  @Column('string')
-  checkoutSessionId: string;
-
-  @Column('string')
+  @Column()
   subscriber: string;
 
-  @Column('timestamp')
+  @Column()
   startDate: number;
 
-  @Column('timestamp')
+  @Column()
   endDate: number;
 
   @Column({ enum: SubscriptionStatusEnum, type: 'enum', default: SubscriptionStatusEnum.ACTIVE })
   status: SubscriptionStatusEnum;
-
-  @Column('number')
-  totalAmount: number;
-
-  @Column('string')
-  unit: string;
 
   constructor(item?: Partial<Omit<SubscriptionEntity, 'id'>>) {
     super();
@@ -40,12 +31,9 @@ export class SubscriptionEntity extends AbstractEntity<SubscriptionDto> {
   }
 
   assign(item: Partial<Omit<SubscriptionEntity, 'id'>>): void {
-    this.checkoutSessionId = item.checkoutSessionId ?? this.checkoutSessionId;
     this.subscriber = item.subscriber ?? this.subscriber;
     this.startDate = item.startDate ?? this.startDate;
     this.endDate = item.endDate ?? this.endDate;
     this.status = item.status ?? this.status;
-    this.totalAmount = item.totalAmount ?? this.totalAmount;
-    this.unit = item.unit ?? this.unit;
   }
 }

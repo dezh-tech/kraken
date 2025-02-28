@@ -1,6 +1,18 @@
 import * as crypto from 'node:crypto';
 
-import { Body, Controller, Delete, Headers, Param, Patch, Post, UnauthorizedException, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Headers,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
@@ -8,6 +20,8 @@ import { SubscriptionGenerateCheckoutSessionDto } from './dto/subscription-gener
 import { SubscriptionsService } from './subscriptions.service';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import JwtAuthGuard from '../auth/guards/jwt-auth.guard';
+import { Nip98AuthGuard } from '../auth/guards/nip98-auth.guard';
+import { Request } from 'express';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
@@ -19,8 +33,8 @@ export class SubscriptionsController {
 
   @Post('checkout-session')
   async generateCheckoutSession(@Body() args: SubscriptionGenerateCheckoutSessionDto) {
-    const data = await this.subscriptionService.generateCheckoutSession(args.subscriber);
-    return data.url;
+    const data = await this.subscriptionService.generateCheckoutSession(args.subscriber, args.planId);
+    return data;
   }
 
   @Post('webhook')
@@ -30,6 +44,7 @@ export class SubscriptionsController {
     @Headers('webhook-id') webhookId: string,
     @Body() body: any,
   ) {
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa")
     const secret = this.apiConfig.trySpeedConfig.webhookSecret;
 
     const isValid = this.verifySignature(secret, signature, webhookId, timestamp, body);
@@ -44,7 +59,8 @@ export class SubscriptionsController {
     if (parsedBody.event_type === 'checkout_session.paid') {
       await this.subscriptionService.CheckoutSessionCompleteHandler(
         parsedBody.data.object.id,
-        parsedBody.data.object.metadata.npub,
+        parsedBody.data.object.metadata.pubkey,
+        parsedBody.data.object.metadata.planId,
         parsedBody.data.object.amount,
         parsedBody.data.object.target_currency,
       );
@@ -86,6 +102,12 @@ export class SubscriptionsController {
   @Post('seedRedis')
   seedRedis() {
     return this.subscriptionService.seedRedis();
+  }
+
+  @Get('remaining')
+  @UseGuards(Nip98AuthGuard)
+  remaining(@Req() req: Request) {
+    return this.subscriptionService.getRemainingOfSubscription((req.user as { pubkey: string })?.pubkey);
   }
 
   @UseGuards(JwtAuthGuard)
