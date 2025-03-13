@@ -80,6 +80,8 @@ export class ApiConfigService {
     return {
       webhookSecret: this.getString('TRYSPEED_WEBHOOK_SECRET'),
       apiKey: this.getString('TRYSPEED_API_KEY'),
+      successfulPaymentUrl: this.getString('TRYSPEED_SUCCESSFUL_PAYMNET_URL'),
+      failedPaymentUrl: this.getString('TRYSPEED_FAILED_PAYMNET_URL')
     };
   }
 

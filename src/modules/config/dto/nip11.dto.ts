@@ -39,6 +39,11 @@ export class Nip11DTO extends AbstractDto {
   @IsString()
   version?: string;
 
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  onion_address?: string;
+
   @ApiProperty({ type: [String] })
   @IsArray()
   relay_countries?: string[];
@@ -97,6 +102,7 @@ export class Nip11DTO extends AbstractDto {
     this.relay_countries = e.relay_countries ?? undefined;
     this.language_tags = e.language_tags ?? undefined;
     this.tags = e.tags ?? undefined;
+    this.onion_address = e.onion_address ?? undefined;
 
     // Optional fields
     this.posting_policy = e.posting_policy ?? undefined;
@@ -106,7 +112,7 @@ export class Nip11DTO extends AbstractDto {
 
     // Handle Retention
     if (e.retention) {
-      this.retention = e.retention ?? undefined
+      this.retention = e.retention ?? undefined;
     }
 
     // Handle Fees
@@ -145,7 +151,7 @@ export class Nip11DTO extends AbstractDto {
           max_content_length: e.limitation.max_content_length ?? undefined,
           created_at_lower_limit: e.limitation.created_at_lower_limit ?? undefined,
           created_at_upper_limit: e.limitation.created_at_upper_limit ?? undefined,
-          default_query_limit: e.limitation.default_query_limit ?? undefined,
+          default_limit: e.limitation.default_query_limit ?? undefined,
           max_limit: e.limitation.max_limit ?? undefined,
         }
       : undefined;

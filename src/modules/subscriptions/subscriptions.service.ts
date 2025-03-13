@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import axios from 'axios';
 import Redis from 'ioredis';
@@ -12,6 +12,7 @@ import { SubscriptionStatusEnum } from './enums/subscription-status.enum';
 import { InvoiceService } from '../invoices/invoice.service';
 import { InvoiceStatusEnum } from '../invoices/enums/invoice-status.enum';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { nip19 } from 'nostr-tools';
 
 @Injectable()
 export class SubscriptionsService {
@@ -27,10 +28,15 @@ export class SubscriptionsService {
     private readonly InvoiceService: InvoiceService,
   ) {}
 
-  async generateCheckoutSession(pubkey: string, planId: string) {
-    // if (!/^npub1([A-HJ-NP-Z0-9]{32})$/.test(npub)) {
-    //   throw new BadRequestException('invalid npub provided.');
-    // }
+  async generateCheckoutSession(npub: `npub1${string}`, planId: string) {
+    let pubkey: string;
+    try {
+      pubkey = nip19.decode<'npub'>(npub).data;
+    } catch (err) {
+      throw new BadRequestException('invalid npub');
+    }
+
+    console.log(pubkey)
 
     const headers = {
       accept: 'application/json',
@@ -58,6 +64,8 @@ export class SubscriptionsService {
       payment_methods: ['lightning'],
       amount_paid_tolerance: 1,
       metadata: { pubkey, planId },
+      success_url: this.apiConfig.trySpeedConfig.successfulPaymentUrl,
+      cancel_url: this.apiConfig.trySpeedConfig.failedPaymentUrl,
     };
 
     let checkoutSessionUrl: string;

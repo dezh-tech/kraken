@@ -56,6 +56,9 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
   url: string | null;
 
   @Column()
+  onion_address: string | null;
+
+  @Column()
   retention?: RetentionEntity[] | null;
 
   @Column()
@@ -94,6 +97,7 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
     this.payments_url = item.payments_url ?? this.payments_url;
     this.icon = item.icon ?? this.icon;
     this.url = item.url ?? this.url;
+    this.onion_address = item.onion_address ?? this.onion_address;
 
     // Handle Retention
     this.retention = item.retention ?? this.retention ?? null;

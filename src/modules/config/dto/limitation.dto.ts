@@ -58,5 +58,5 @@ export class LimitationDto {
 
   @ApiProperty()
   @IsInt()
-  default_query_limit?: number;
+  default_limit?: number;
 }

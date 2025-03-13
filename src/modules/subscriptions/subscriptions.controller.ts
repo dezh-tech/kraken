@@ -1,6 +1,7 @@
 import * as crypto from 'node:crypto';
 
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -33,7 +34,15 @@ export class SubscriptionsController {
 
   @Post('checkout-session')
   async generateCheckoutSession(@Body() args: SubscriptionGenerateCheckoutSessionDto) {
-    const data = await this.subscriptionService.generateCheckoutSession(args.subscriber, args.planId);
+
+    if(!args.subscriber.startsWith('npub1')){
+      throw new BadRequestException('invalid npub')
+    }
+
+    const data = await this.subscriptionService.generateCheckoutSession(
+      args.subscriber as `npub1${string}`,
+      args.planId,
+    );
     return data;
   }
 
@@ -44,7 +53,6 @@ export class SubscriptionsController {
     @Headers('webhook-id') webhookId: string,
     @Body() body: any,
   ) {
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa")
     const secret = this.apiConfig.trySpeedConfig.webhookSecret;
 
     const isValid = this.verifySignature(secret, signature, webhookId, timestamp, body);
