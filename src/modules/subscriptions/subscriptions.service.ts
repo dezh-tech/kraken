@@ -36,8 +36,6 @@ export class SubscriptionsService {
       throw new BadRequestException('invalid npub');
     }
 
-    console.log(pubkey)
-
     const headers = {
       accept: 'application/json',
       'content-type': 'application/json',
@@ -169,8 +167,8 @@ export class SubscriptionsService {
     }
   }
 
-  async updateSubscription(id: string, props: UpdateSubscriptionDto) {
-    const s = await this.subscriptionRepository.findOne({ where: { _id: new ObjectId(id) } });
+  async updateSubscription(id: ObjectId, props: UpdateSubscriptionDto) {
+    const s = await this.subscriptionRepository.findOne({ where: { _id: id } });
 
     if (!s) {
       throw new NotFoundException('subscription not found');
@@ -195,7 +193,7 @@ export class SubscriptionsService {
     await this.redis.call('CF.DEL', 'SUBSCRIPTIONS', s.subscriber);
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT) // Runs once every day at midnight
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async removeExpiredSubscriptions() {
     this.logger.log('Running daily cleanup of expired subscriptions...');
 
@@ -226,7 +224,7 @@ export class SubscriptionsService {
       await pipeline.exec();
 
       for await (const { _id } of expiredSubscriptions) {
-        await this.updateSubscription(_id.toString(), {
+        await this.updateSubscription(_id, {
           status: SubscriptionStatusEnum.EXPIRED,
         });
       }

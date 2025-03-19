@@ -15,12 +15,14 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
 import { UserModule } from './modules/users/user.module';
 import { SharedModule } from './shared/shared.module';
 import { InvoiceModule } from './modules/invoices/invoice.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     SharedModule,
     UserModule,

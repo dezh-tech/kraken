@@ -23,6 +23,7 @@ import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import JwtAuthGuard from '../auth/guards/jwt-auth.guard';
 import { Nip98AuthGuard } from '../auth/guards/nip98-auth.guard';
 import { Request } from 'express';
+import { ObjectId } from 'typeorm';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
@@ -122,7 +123,7 @@ export class SubscriptionsController {
   @ApiBearerAuth()
   @Patch(':id')
   updateSubscription(@Param('id') id: string, @Body() props: UpdateSubscriptionDto) {
-    return this.subscriptionService.updateSubscription(id, props);
+    return this.subscriptionService.updateSubscription(new ObjectId(id), props);
   }
 
   @UseGuards(JwtAuthGuard)
