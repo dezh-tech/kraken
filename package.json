@@ -1,6 +1,6 @@
 {
   "name": "kraken",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Immortal Nostr relay management service",
   "author": "zigBalthazar <zigBalthazar@gmail.com>",
   "license": "MIT",
