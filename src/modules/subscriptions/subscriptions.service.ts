@@ -123,7 +123,7 @@ export class SubscriptionsService {
         status: SubscriptionStatusEnum.ACTIVE,
       });
 
-      await this.redis.call('CF.ADD', 'SUBSCRIPTIONS', pubkey);
+      await this.redis.call('CF.ADD', 'IMMO_WHITE_LIST', pubkey);
 
       await this.subscriptionRepository.save(sub);
     }
@@ -156,12 +156,14 @@ export class SubscriptionsService {
       const pipeline = this.redis.pipeline();
 
       for (const subscription of subscriptions) {
-        pipeline.call('CF.ADD', 'SUBSCRIPTIONS', subscription.subscriber);
+        pipeline.call('CF.ADD', 'IMMO_WHITE_LIST', subscription.subscriber);
       }
 
       const results = await pipeline.exec();
 
       this.logger.log(`Pipeline executed with ${results?.length} commands.`);
+
+      return;
     } catch (error) {
       this.logger.error('An error occurred during seedRedis execution.', (error as { stack: string }).stack);
     }
@@ -190,10 +192,10 @@ export class SubscriptionsService {
 
     await this.subscriptionRepository.delete(id);
 
-    await this.redis.call('CF.DEL', 'SUBSCRIPTIONS', s.subscriber);
+    await this.redis.call('CF.DEL', 'IMMO_WHITE_LIST', s.subscriber);
   }
 
-  @Cron(CronExpression.EVERY_30_MINUTES)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async removeExpiredSubscriptions() {
     this.logger.log('Running daily cleanup of expired subscriptions...');
 
@@ -205,6 +207,7 @@ export class SubscriptionsService {
           endDate: {
             $lte: now,
           },
+          status: SubscriptionStatusEnum.ACTIVE,
         },
       });
 
@@ -218,7 +221,7 @@ export class SubscriptionsService {
       const pipeline = this.redis.pipeline();
 
       for (const sub of expiredSubscriptions) {
-        pipeline.call('CF.DEL', 'SUBSCRIPTIONS', sub.subscriber);
+        pipeline.call('CF.DEL', 'IMMO_WHITE_LIST', sub.subscriber);
       }
 
       await pipeline.exec();
