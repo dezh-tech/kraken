@@ -195,7 +195,7 @@ export class SubscriptionsService {
     await this.redis.call('CF.DEL', 'IMMO_WHITE_LIST', s.subscriber);
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async removeExpiredSubscriptions() {
     this.logger.log('Running daily cleanup of expired subscriptions...');
 
@@ -233,6 +233,7 @@ export class SubscriptionsService {
       }
 
       this.logger.log(`Successfully removed ${expiredSubscriptions.length} expired subscriptions.`);
+      await this.seedRedis()
     } catch (error) {
       this.logger.error('Error while removing expired subscriptions.', error.stack);
     }

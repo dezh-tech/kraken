@@ -14,7 +14,7 @@ export class Nip11Controller {
   }
 
   @Get()
-  async handleRequest(@Req() req: Request, @Res() res: Response): Promise<void> {
+  async handleRequest(@Req() req: Request, @Res() res: Response) {
     if (!this.CONFIG) {
       await this.setConfig();
     }
@@ -23,9 +23,9 @@ export class Nip11Controller {
 
     if (req.headers['accept'] === 'application/nostr+json') {
       res.json(config);
+    } else {
+      res.type('text/html').send(this.generateHtmlResponse(config));
     }
-
-    res.type('text/html').send(this.generateHtmlResponse(config));
   }
 
   private async setConfig(): Promise<void> {
