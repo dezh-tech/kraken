@@ -80,6 +80,7 @@ export class ApiConfigService {
     return {
       relays: this.getString('NOSTR_RELAYS').split(',') ?? [],
       privateKey: this.getString('NOSTR_PRIVATE_KEY'),
+      mainRelay: this.getString('NOSTR_MAIN_RELAY'),
     };
   }
 

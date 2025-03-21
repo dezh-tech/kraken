@@ -16,6 +16,8 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { nip19 } from 'nostr-tools';
 import { TransporterService } from '../notification/transporter-factory.service';
 import { ITransporter } from '../notification/transporter.interface';
+import { SubscriptionEntity } from './entities/subscription.entity';
+import { MongoFindOneOptions } from 'typeorm/find-options/mongodb/MongoFindOneOptions';
 
 @Injectable()
 export class SubscriptionsService {
@@ -156,8 +158,7 @@ export class SubscriptionsService {
       We appreciate your support in building a better decentralized future. Enjoy your experience! 🚀
 
       Best,
-      Jellyfish Team
-      https://jellyfish.land`,
+      Jellyfish Team🪼`,
       pubkey,
     );
   }
@@ -264,8 +265,7 @@ export class SubscriptionsService {
             Thank you for being part of our relay network. We hope to see you back soon!
 
             Best,
-            Jellyfish Team
-            https://jellyfish.land`,
+            Jellyfish Team🪼`,
             s.subscriber,
           );
         } else if (daysBeforeExpiration === 5 || daysBeforeExpiration === 1) {
@@ -281,8 +281,7 @@ export class SubscriptionsService {
             Stay Immortal!
 
             Best,
-            Jellyfish Team
-            https://jellyfish.land`,
+            Jellyfish Team🪼`,
             s.subscriber,
           );
         }
@@ -314,5 +313,15 @@ export class SubscriptionsService {
     }
 
     return sub.endDate - now;
+  }
+
+  async findOne(opt: MongoFindOneOptions<SubscriptionEntity>) {
+    const sub = await this.subscriptionRepository.findOne(opt);
+
+    if (!sub) {
+      throw new NotFoundException('subscription not found');
+    }
+
+    return sub;
   }
 }

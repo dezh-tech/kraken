@@ -12,5 +12,6 @@ import { InvoiceModule } from '../invoices/invoice.module';
   imports: [ServicesConfigModule, InvoiceModule, TypeOrmModule.forFeature([SubscriptionEntity])],
   providers: [SubscriptionsService, SubscriptionRepository],
   controllers: [SubscriptionsController],
+  exports: [SubscriptionsService],
 })
 export class SubscriptionsModule {}

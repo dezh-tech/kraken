@@ -16,6 +16,7 @@ import { UserModule } from './modules/users/user.module';
 import { SharedModule } from './shared/shared.module';
 import { InvoiceModule } from './modules/invoices/invoice.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RelayActionModule } from './modules/relay-action/relay-action.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     SubscriptionsModule,
     LogModule,
     InvoiceModule,
+    RelayActionModule,
   ],
   controllers: [],
   providers: [],
