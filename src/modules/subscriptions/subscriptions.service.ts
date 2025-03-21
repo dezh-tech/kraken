@@ -148,17 +148,17 @@ export class SubscriptionsService {
     await this.nostrNotification.sendNotification(
       `Welcome to Jellyfish – Premium Access Activated!
 
-      Thank you for subscribing to Jellyfish ecosystem! 🎉 Your premium access is now active, and you can start relaying messages with enhanced reliability, speed, and privacy.
+Thank you for subscribing to Jellyfish ecosystem! 🎉 Your premium access is now active, and you can start relaying messages with enhanced reliability, speed, and privacy.
 
-      Here’s what you need to get started:
-      ✅ Relay URL: wss://jellyfish.land
-      ✅ Support & Updates: Follow us on Nostr: @nostr:npub1hu47u55pzjw8cdg0t5f2uvh4znrcvnl3pqz3st6p0pfcctzzzqrsplc46u
-      ✅ Need help? Reach out at hi@dezh.tech.
+Here’s what you need to get started:
+✅ Relay URL: wss://jellyfish.land
+✅ Support & Updates: Follow us on Nostr: @nostr:npub1hu47u55pzjw8cdg0t5f2uvh4znrcvnl3pqz3st6p0pfcctzzzqrsplc46u
+✅ Need help? Reach out at hi@dezh.tech.
 
-      We appreciate your support in building a better decentralized future. Enjoy your experience! 🚀
+Stay Immortal!🪼
 
-      Best,
-      Jellyfish Team🪼`,
+Best,
+Jellyfish Team`,
       pubkey,
     );
   }
@@ -256,32 +256,32 @@ export class SubscriptionsService {
           await this.nostrNotification.sendNotification(
             `Your Subscription to Jellyfish Has Expired
 
-            Your subscription to Jellyfish ecosystem has expired. We'd love to keep you connected! To continue enjoying reliable and fast relaying, please renew your subscription.
+Your subscription to Jellyfish ecosystem has expired. We'd love to keep you connected! To continue enjoying reliable and fast relaying, please renew your subscription.
 
-            🔄 Renew Now: https://jellyfish.land/relay
-            🚀 Relay URL: wss://jellyfish.land (Access will be restricted until renewal)
-            💬 Need help? Contact us at hi@dezh.tech
+🔄 Renew Now: https://jellyfish.land/relay
+🚀 Relay URL: wss://jellyfish.land (Access will be restricted until renewal)
+💬 Need help? Contact us at hi@dezh.tech
 
-            Thank you for being part of our relay network. We hope to see you back soon!
+Stay Immortal🪼, We hope to see you back soon!
 
-            Best,
-            Jellyfish Team🪼`,
+Best,
+Jellyfish Team`,
             s.subscriber,
           );
         } else if (daysBeforeExpiration === 5 || daysBeforeExpiration === 1) {
           await this.nostrNotification.sendNotification(
             `Reminder: Your Jellyfish Subscription Expires in ${daysBeforeExpiration} Day${daysBeforeExpiration > 1 ? 's' : ''}
 
-            Your subscription to Jellyfish ecosystem will expire in **${daysBeforeExpiration} day${daysBeforeExpiration > 1 ? 's' : ''}**. To avoid any interruptions, renew your subscription today!
+Your subscription to Jellyfish ecosystem will expire in **${daysBeforeExpiration} day${daysBeforeExpiration > 1 ? 's' : ''}**. To avoid any interruptions, renew your subscription today!
 
-            🔄 Renew Now: https://jellyfish.land/relay
-            🚀 Relay URL: wss://jellyfish.land
-            💬 Need help? Contact us at hi@dezh.tech
+🔄 Renew Now: https://jellyfish.land/relay
+🚀 Relay URL: wss://jellyfish.land
+💬 Need help? Contact us at hi@dezh.tech
 
-            Stay Immortal!
+Stay Immortal!🪼
 
-            Best,
-            Jellyfish Team🪼`,
+Best,
+Jellyfish Team`,
             s.subscriber,
           );
         }
