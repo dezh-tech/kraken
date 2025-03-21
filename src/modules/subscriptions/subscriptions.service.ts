@@ -222,7 +222,7 @@ Jellyfish Team`,
     await this.redis.call('CF.DEL', 'IMMO_WHITE_LIST', s.subscriber);
   }
 
-  @Cron(CronExpression.EVERY_30_MINUTES)
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async removeExpiredSubscriptions() {
     this.logger.log('Running daily cleanup of expired subscriptions...');
 
@@ -243,7 +243,7 @@ Jellyfish Team`,
       const pipeline = this.redis.pipeline();
 
       for await (const s of activeSubscriptions) {
-        const daysBeforeExpiration = Math.ceil((s.endDate - now) / (24 * 60 * 60 * 1000));
+        const daysBeforeExpiration = Math.ceil((s.endDate - now) / (24 * 60 * 60));
 
         if (s.endDate <= now) {
           // Subscription expired
