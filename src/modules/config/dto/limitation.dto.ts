@@ -14,10 +14,6 @@ export class LimitationDto {
 
   @ApiProperty()
   @IsInt()
-  max_filters?: number;
-
-  @ApiProperty()
-  @IsInt()
   max_subid_length?: number;
 
   @ApiProperty()

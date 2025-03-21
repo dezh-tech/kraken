@@ -142,7 +142,6 @@ export class Nip11DTO extends AbstractDto {
           auth_required: e.limitation.auth_required ?? undefined,
           max_message_length: e.limitation.max_message_length ?? undefined,
           max_subid_length: e.limitation.max_subid_length ?? undefined,
-          max_filters: e.limitation.max_filters ?? undefined,
           max_subscriptions: e.limitation.max_subscriptions ?? undefined,
           min_pow_difficulty: e.limitation.min_pow_difficulty ?? undefined,
           payment_required: e.limitation.payment_required ?? undefined,

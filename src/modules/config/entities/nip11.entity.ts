@@ -109,7 +109,6 @@ export class Nip11Entity extends AbstractEntity<Nip11DTO> {
     this.limitation = {
       max_message_length: item.limitation?.max_message_length ?? this.limitation?.max_message_length ?? null,
       max_subscriptions: item.limitation?.max_subscriptions ?? this.limitation?.max_subscriptions ?? null,
-      max_filters: item.limitation?.max_filters ?? this.limitation?.max_filters ?? null,
       max_subid_length: item.limitation?.max_subid_length ?? this.limitation?.max_subid_length ?? null,
       min_pow_difficulty: item.limitation?.min_pow_difficulty ?? this.limitation?.min_pow_difficulty ?? null,
       auth_required: item.limitation?.auth_required ?? this.limitation?.auth_required ?? null,

@@ -8,9 +8,6 @@ export class LimitationEntity {
   max_subscriptions?: number | null;
 
   @Column()
-  max_filters?: number | null;
-
-  @Column()
   max_subid_length?: number | null;
 
   @Column()

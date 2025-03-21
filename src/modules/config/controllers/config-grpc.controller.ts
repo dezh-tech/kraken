@@ -23,7 +23,7 @@ export class ConfigGrpcController implements ParametersController {
       limitations: {
         maxMessageLength: limitations?.max_message_length,
         maxSubscriptions: limitations?.max_subscriptions,
-        maxFilters: limitations?.max_filters,
+        maxFilters: 0, // TODO ::: remove me.
         maxSubidLength: limitations?.max_subid_length,
         minPowDifficulty: limitations?.min_pow_difficulty,
         authRequired: limitations?.auth_required,
