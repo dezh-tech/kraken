@@ -6,14 +6,12 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
 
-import { TelegramNotificationStrategy } from './notification/telegram.strategy';
 import { ApiConfigService } from './services/api-config.service';
-import { NotificationService } from './services/notification.service';
 import { Nip11Controller } from './controllers/nip11.controller';
 import { join } from 'path';
 import { ServicesConfigModule } from '../../src/modules/config/config.module';
 
-const providers: Provider[] = [ConfigService, ApiConfigService, NotificationService, TelegramNotificationStrategy];
+const providers: Provider[] = [ConfigService, ApiConfigService];
 
 @Global()
 @Module({

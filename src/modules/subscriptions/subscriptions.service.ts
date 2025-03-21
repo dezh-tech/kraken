@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, Logger, NotFoundException } from '@nes
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import axios from 'axios';
 import Redis from 'ioredis';
+import { hexToBytes } from '@noble/hashes/utils';
 
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
 import { ConfigService } from '../config/config.service';
@@ -13,12 +14,14 @@ import { InvoiceService } from '../invoices/invoice.service';
 import { InvoiceStatusEnum } from '../invoices/enums/invoice-status.enum';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { nip19 } from 'nostr-tools';
+import { TransporterService } from '../notification/transporter-factory.service';
+import { ITransporter } from '../notification/transporter.interface';
 
 @Injectable()
 export class SubscriptionsService {
   private readonly logger = new Logger(SubscriptionsService.name);
-
   private readonly apiUrl = 'https://api.tryspeed.com/checkout-sessions';
+  private readonly nostrNotification: ITransporter;
 
   constructor(
     @InjectRedis() private readonly redis: Redis,
@@ -26,7 +29,12 @@ export class SubscriptionsService {
     private readonly subscriptionRepository: SubscriptionRepository,
     private readonly configService: ConfigService,
     private readonly InvoiceService: InvoiceService,
-  ) {}
+  ) {
+    this.nostrNotification = TransporterService.createNostrTransporter(
+      hexToBytes(this.apiConfig.getNostrConfig.privateKey),
+      this.apiConfig.getNostrConfig.relays,
+    );
+  }
 
   async generateCheckoutSession(npub: `npub1${string}`, planId: string) {
     let pubkey: string;
@@ -134,6 +142,24 @@ export class SubscriptionsService {
       totalAmount,
       unit,
     });
+
+    await this.nostrNotification.sendNotification(
+      `Welcome to Jellyfish – Premium Access Activated!
+
+      Thank you for subscribing to Jellyfish ecosystem! 🎉 Your premium access is now active, and you can start relaying messages with enhanced reliability, speed, and privacy.
+
+      Here’s what you need to get started:
+      ✅ Relay URL: wss://jellyfish.land
+      ✅ Support & Updates: Follow us on Nostr: @nostr:npub1hu47u55pzjw8cdg0t5f2uvh4znrcvnl3pqz3st6p0pfcctzzzqrsplc46u
+      ✅ Need help? Reach out at hi@dezh.tech.
+
+      We appreciate your support in building a better decentralized future. Enjoy your experience! 🚀
+
+      Best,
+      Jellyfish Team
+      https://jellyfish.land`,
+      pubkey,
+    );
   }
 
   async seedRedis() {
@@ -195,45 +221,78 @@ export class SubscriptionsService {
     await this.redis.call('CF.DEL', 'IMMO_WHITE_LIST', s.subscriber);
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async removeExpiredSubscriptions() {
     this.logger.log('Running daily cleanup of expired subscriptions...');
 
     try {
       const now = Math.floor(Date.now() / 1000); // sec
 
-      const expiredSubscriptions = await this.subscriptionRepository.findAll({
+      const activeSubscriptions = await this.subscriptionRepository.findAll({
         where: {
-          endDate: {
-            $lte: now,
-          },
           status: SubscriptionStatusEnum.ACTIVE,
         },
       });
 
-      if (expiredSubscriptions.length === 0) {
-        this.logger.log('No expired subscriptions to remove.');
+      if (activeSubscriptions.length === 0) {
+        this.logger.log('No active subscriptions.');
         return;
       }
 
-      this.logger.log(`Removing ${expiredSubscriptions.length} expired subscriptions...`);
-
       const pipeline = this.redis.pipeline();
 
-      for (const sub of expiredSubscriptions) {
-        pipeline.call('CF.DEL', 'IMMO_WHITE_LIST', sub.subscriber);
+      for await (const s of activeSubscriptions) {
+        const daysBeforeExpiration = Math.ceil((s.endDate - now) / (24 * 60 * 60 * 1000));
+
+        if (s.endDate <= now) {
+          // Subscription expired
+          pipeline.call('CF.DEL', 'IMMO_WHITE_LIST', s.subscriber);
+
+          await this.updateSubscription(s._id, {
+            status: SubscriptionStatusEnum.EXPIRED,
+          });
+
+          await this.nostrNotification.sendNotification(
+            `Your Subscription to Jellyfish Has Expired
+
+            Your subscription to Jellyfish ecosystem has expired. We'd love to keep you connected! To continue enjoying reliable and fast relaying, please renew your subscription.
+
+            🔄 Renew Now: https://jellyfish.land/relay
+            🚀 Relay URL: wss://jellyfish.land (Access will be restricted until renewal)
+            💬 Need help? Contact us at hi@dezh.tech
+
+            Thank you for being part of our relay network. We hope to see you back soon!
+
+            Best,
+            Jellyfish Team
+            https://jellyfish.land`,
+            s.subscriber,
+          );
+        } else if (daysBeforeExpiration === 5 || daysBeforeExpiration === 1) {
+          await this.nostrNotification.sendNotification(
+            `Reminder: Your Jellyfish Subscription Expires in ${daysBeforeExpiration} Day${daysBeforeExpiration > 1 ? 's' : ''}
+
+            Your subscription to Jellyfish ecosystem will expire in **${daysBeforeExpiration} day${daysBeforeExpiration > 1 ? 's' : ''}**. To avoid any interruptions, renew your subscription today!
+
+            🔄 Renew Now: https://jellyfish.land/relay
+            🚀 Relay URL: wss://jellyfish.land
+            💬 Need help? Contact us at hi@dezh.tech
+
+            Stay Immortal!
+
+            Best,
+            Jellyfish Team
+            https://jellyfish.land`,
+            s.subscriber,
+          );
+        }
       }
 
       await pipeline.exec();
 
-      for await (const { _id } of expiredSubscriptions) {
-        await this.updateSubscription(_id, {
-          status: SubscriptionStatusEnum.EXPIRED,
-        });
-      }
+      this.logger.log(`Successfully removed ${activeSubscriptions.length} expired subscriptions.`);
 
-      this.logger.log(`Successfully removed ${expiredSubscriptions.length} expired subscriptions.`);
-      await this.seedRedis()
+      await this.seedRedis();
     } catch (error) {
       this.logger.error('Error while removing expired subscriptions.', error.stack);
     }
