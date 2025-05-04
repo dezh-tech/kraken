@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package seasnail.v1;
+
+option go_package = "seasnail/v1;seasnailv1";
+
+// Domain management service
+service DomainService {
+  rpc RegisterDomain (RegisterDomainRequest) returns (RegisterDomainResponse);
+  rpc UpdateDomain (UpdateDomainRequest) returns (UpdateDomainResponse);
+  rpc DeleteDomain (DeleteDomainRequest) returns (DeleteDomainResponse);
+}
+
+// Request message to register a new domain
+message RegisterDomainRequest {
+  string domain = 1;
+  int64 base_price = 2;
+  int64 default_ttl = 3;
+}
+
+// Response message for RegisterDomain
+message RegisterDomainResponse {
+  string id = 1;
+  string domain = 2;
+  int64 base_price = 3;
+  int64 default_ttl = 4;
+  DomainStatus status = 5;
+}
+
+// Request message to update a domain
+message UpdateDomainRequest {
+ string id = 1;
+ optional string domain = 2;
+ optional int64 base_price = 3;
+ optional int64 default_ttl = 4;
+ optional DomainStatus status = 5;
+}
+
+// Response message for UpdateDomain
+message UpdateDomainResponse {
+  string id = 1;
+  string domain = 2;
+  int64 base_price = 3;
+  int64 default_ttl = 4;
+  DomainStatus status = 5;
+}
+
+// Request message to delete a domain by ID
+message DeleteDomainRequest {
+  string id = 1;
+}
+
+// Response message for DeleteDomain
+message DeleteDomainResponse {}
+
+// Enum representing domain status
+enum DomainStatus {
+  DOMAIN_STATUS_UNSPECIFIED = 0;
+  DOMAIN_STATUS_ACTIVE = 1;
+  DOMAIN_STATUS_INACTIVE = 2;
+}

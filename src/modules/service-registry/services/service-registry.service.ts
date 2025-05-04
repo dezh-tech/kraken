@@ -6,7 +6,10 @@ import { ApiConfigService } from '../../../../src/shared/services/api-config.ser
 import type RegisterServiceRegistryDto from '../dtos/service-registry-register.dto';
 import { ServiceRegistryEntity } from '../entities/service-registry.entity';
 import { ServiceRegistryRepository } from '../service-registry.repository';
-import { ImmortalGrpcClient } from 'src/modules/grpc/immortal-grpc.client';
+import { WorkersGrpcClient } from 'src/modules/grpc/immortal-grpc.client';
+import { ServerType } from 'typeorm';
+import { ServiceType } from '../enums/service-types.enum';
+import { ServiceStatus } from '../enums/service-status.enum';
 
 @Injectable()
 // eslint-disable-next-line unicorn/prefer-event-target
@@ -32,6 +35,10 @@ export default class ServiceRegistryService extends EventEmitter {
 
   async findByToken(token: string) {
     return this.serviceRegistryRepository.findOne({ where: { token } });
+  }
+
+  async findOneByType(type: ServiceType) {
+    return this.serviceRegistryRepository.findOne({ where: { type, status: ServiceStatus.ACTIVE } });
   }
 
   generateApiKey(serviceType: string, region: string): string {

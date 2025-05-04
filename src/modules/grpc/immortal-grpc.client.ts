@@ -6,8 +6,8 @@ import { HEALTH_SERVICE_NAME, HealthServiceClient, RELAY_V1_PACKAGE_NAME } from 
 
 
 @Injectable()
-export class ImmortalGrpcClient implements OnModuleInit {
-  static instance: ImmortalGrpcClient;
+export class WorkersGrpcClient implements OnModuleInit {
+  static instance: WorkersGrpcClient;
 
   private clientGrpc: ClientGrpc;
   public serviceClient: HealthServiceClient;
@@ -16,7 +16,7 @@ export class ImmortalGrpcClient implements OnModuleInit {
   private url = '';
 
   constructor() {
-    ImmortalGrpcClient.instance = this;
+    WorkersGrpcClient.instance = this;
     this.initializeClient();
   }
 

@@ -2,7 +2,7 @@ import type { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 
-import { ImmortalGrpcClient } from '../../../../src/modules/grpc/immortal-grpc.client';
+import { WorkersGrpcClient } from '../../../../src/modules/grpc/immortal-grpc.client';
 import type { ServiceRegistryEntity } from '../entities/service-registry.entity';
 import { ServiceStatus } from '../enums/service-status.enum';
 import { ServiceType } from '../enums/service-types.enum';
@@ -19,7 +19,7 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
   constructor(
     private readonly serviceRegistryService: ServiceRegistryService,
     private readonly serviceRegistryRepository: ServiceRegistryRepository,
-    private readonly immortalGrpcClient: ImmortalGrpcClient,
+    private readonly immortalGrpcClient: WorkersGrpcClient,
   ) {
     this.serviceRegistryService.on('SERVICE_REGISTERED', (service: ServiceRegistryEntity) => {
       this.logger.log(`New service registered: ${service.type} (ID: ${service._id})`);
@@ -80,18 +80,19 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
 
       let isHealthy = false;
 
-      if (service.type === ServiceType.RELAY) {
-        this.immortalGrpcClient.setUrl(service.url)
+      this.immortalGrpcClient.setUrl(service.url);
 
-        const res = await lastValueFrom(this.immortalGrpcClient.serviceClient.status({}));
+      const res = await lastValueFrom(this.immortalGrpcClient.serviceClient.status({}));
 
-        isHealthy = res.services.every((s) => s.status === Status.CONNECTED);
-      }
+      isHealthy = res.services.every((s) => s.status === Status.CONNECTED);
+      res.services.forEach((s) => console.log(s.status));
 
       service.assign({
         lastHealthCheck: Date.now(),
         status: isHealthy ? ServiceStatus.ACTIVE : ServiceStatus.UN_HEALTHY,
       });
+
+      // TODO ::: send notification
       this.logger.log(
         `Health check result for service: ${service.type} (ID: ${service._id}): ${isHealthy ? 'HEALTHY' : 'UNHEALTHY'}`,
       );
@@ -100,10 +101,17 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
         `Failed to perform health check for service: ${service.type} (ID: ${service._id}). Marking as INACTIVE.`,
         (error as { stack: string }).stack,
       );
+
       service.assign({
         lastHealthCheck: Date.now(),
         status: ServiceStatus.INACTIVE,
       });
+
+      const interval = this.serviceIntervals.get(String(service._id));
+      if (interval) {
+        clearInterval(interval);
+        this.serviceIntervals.delete(String(service._id));
+      }
     } finally {
       await this.serviceRegistryRepository.save(service);
       this.logger.debug(`Service status updated for service: ${service.type} (ID: ${service._id}).`);

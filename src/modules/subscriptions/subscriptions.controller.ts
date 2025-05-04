@@ -14,7 +14,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
 
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
 import { SubscriptionGenerateCheckoutSessionDto } from './dto/subscription-generate-checkout-session.dto';
@@ -35,9 +35,8 @@ export class SubscriptionsController {
 
   @Post('checkout-session')
   async generateCheckoutSession(@Body() args: SubscriptionGenerateCheckoutSessionDto) {
-
-    if(!args.subscriber.startsWith('npub1')){
-      throw new BadRequestException('invalid npub')
+    if (!args.subscriber.startsWith('npub1')) {
+      throw new BadRequestException('invalid npub');
     }
 
     const data = await this.subscriptionService.generateCheckoutSession(
@@ -66,12 +65,26 @@ export class SubscriptionsController {
     const parsedBody = JSON.parse(bodyString);
 
     if (parsedBody.event_type === 'checkout_session.paid') {
-      await this.subscriptionService.CheckoutSessionCompleteHandler(
-        parsedBody.data.object.id,
-        parsedBody.data.object.metadata.pubkey,
-        parsedBody.data.object.metadata.planId,
-        parsedBody.data.object.amount,
-        parsedBody.data.object.target_currency,
+      const object = parsedBody.data.object;
+      const metadata = object.metadata;
+
+      if (metadata.service === 'seasnail') {
+        await this.subscriptionService.handleNip05Checkout(
+          object.id,
+          metadata.pubkey,
+          metadata.name,
+          metadata.domainId,
+          object.amount,
+          object.target_currency,
+        );
+      }
+
+      await this.subscriptionService.handleRelayCheckout(
+        object.id,
+        metadata.pubkey,
+        metadata.planId,
+        object.amount,
+        object.target_currency,
       );
     }
 

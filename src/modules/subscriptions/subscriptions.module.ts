@@ -7,10 +7,12 @@ import { SubscriptionsController } from './subscriptions.controller';
 import { SubscriptionRepository } from './subscriptions.repository';
 import { SubscriptionsService } from './subscriptions.service';
 import { InvoiceModule } from '../invoices/invoice.module';
+import ServiceRegistryModule from '../service-registry/service-registry.module';
+import { SeasnailGrpcClient } from '../grpc/seasnail-grpc.client';
 
 @Module({
-  imports: [ServicesConfigModule, InvoiceModule, TypeOrmModule.forFeature([SubscriptionEntity])],
-  providers: [SubscriptionsService, SubscriptionRepository],
+  imports: [ServiceRegistryModule, ServicesConfigModule, InvoiceModule, TypeOrmModule.forFeature([SubscriptionEntity])],
+  providers: [SubscriptionsService, SubscriptionRepository,SeasnailGrpcClient],
   controllers: [SubscriptionsController],
   exports: [SubscriptionsService],
 })

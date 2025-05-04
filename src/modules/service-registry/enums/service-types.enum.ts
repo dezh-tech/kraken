@@ -1,4 +1,4 @@
 export enum ServiceType {
   RELAY = 'RELAY',
-  NNS = 'NNS',
+  NIP05 = 'NIP05',
 }

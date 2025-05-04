@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import axios from 'axios';
 import Redis from 'ioredis';
@@ -18,6 +24,12 @@ import { TransporterService } from '../notification/transporter-factory.service'
 import { ITransporter } from '../notification/transporter.interface';
 import { SubscriptionEntity } from './entities/subscription.entity';
 import { MongoFindOneOptions } from 'typeorm/find-options/mongodb/MongoFindOneOptions';
+import { SeasnailGrpcClient } from '../grpc/seasnail-grpc.client';
+import { lastValueFrom } from 'rxjs';
+import ServiceRegistryService from '../service-registry/services/service-registry.service';
+import { ServiceType } from '../service-registry/enums/service-types.enum';
+import { template } from 'lodash';
+import { SubscriptionTemplate } from './notify-template';
 
 @Injectable()
 export class SubscriptionsService {
@@ -30,7 +42,9 @@ export class SubscriptionsService {
     private readonly apiConfig: ApiConfigService,
     private readonly subscriptionRepository: SubscriptionRepository,
     private readonly configService: ConfigService,
-    private readonly InvoiceService: InvoiceService,
+    private readonly invoiceService: InvoiceService,
+    private readonly seasnailClient: SeasnailGrpcClient,
+    private readonly serviceRegistry: ServiceRegistryService,
   ) {
     this.nostrNotification = TransporterService.createNostrTransporter(
       hexToBytes(this.apiConfig.getNostrConfig.privateKey),
@@ -38,13 +52,44 @@ export class SubscriptionsService {
     );
   }
 
+  private async getSubscriptionPlan(planId: string) {
+    const config = await this.configService.getNip11();
+    const plans = config?.fees?.subscription ?? [];
+    const plan = plans.find((p) => p.period === Number(planId));
+    if (!plan) throw new NotFoundException('subscription plan not found.');
+    return plan;
+  }
+
+  private async createInvoiceRecord(checkoutSessionId: string, totalAmount: number, unit: string) {
+    await this.invoiceService.create({
+      status: InvoiceStatusEnum.PAID,
+      checkoutSessionId,
+      totalAmount,
+      unit,
+    });
+  }
+
+  private async notifyUser(message: string, pubkey: string) {
+    await this.nostrNotification.sendNotification(message, pubkey);
+  }
+
+  private async addToWhitelist(pubkey: string) {
+    await this.redis.call('CF.ADD', 'IMMO_WHITE_LIST', pubkey);
+  }
+
+  private async removeFromWhitelist(pubkey: string) {
+    await this.redis.call('CF.DEL', 'IMMO_WHITE_LIST', pubkey);
+  }
+
   async generateCheckoutSession(npub: `npub1${string}`, planId: string) {
     let pubkey: string;
     try {
       pubkey = nip19.decode<'npub'>(npub).data;
-    } catch (err) {
+    } catch {
       throw new BadRequestException('invalid npub');
     }
+
+    const subscription = await this.getSubscriptionPlan(planId);
 
     const headers = {
       accept: 'application/json',
@@ -53,22 +98,9 @@ export class SubscriptionsService {
       authorization: `Basic ${Buffer.from(`${this.apiConfig.trySpeedConfig.apiKey}:`).toString('base64')}`,
     };
 
-    const config = await this.configService.getNip11();
-
-    const isSubscriptionPlanExist = config && config.fees && (config.fees.subscription ?? []).length > 0;
-    if (!isSubscriptionPlanExist) {
-      throw new NotFoundException('subscription plan not found.');
-    }
-
-    const subscription = config.fees?.subscription?.find((s) => s.period === Number(planId));
-
-    if (!subscription) {
-      throw new NotFoundException('subscription plan not found.');
-    }
-
     const data = {
-      currency: subscription?.unit,
-      amount: subscription?.amount,
+      currency: subscription.unit,
+      amount: subscription.amount,
       payment_methods: ['lightning'],
       amount_paid_tolerance: 1,
       metadata: { pubkey, planId },
@@ -76,91 +108,64 @@ export class SubscriptionsService {
       cancel_url: this.apiConfig.trySpeedConfig.failedPaymentUrl,
     };
 
-    let checkoutSessionUrl: string;
-
     try {
-      checkoutSessionUrl = (await axios.post(this.apiUrl, data, { headers })).data.url;
+      const response = await axios.post(this.apiUrl, data, { headers });
+      return response.data.url;
     } catch (error) {
-      console.error('Error generating checkout session:', error.response?.data || error.message);
-
+      this.logger.error('Error generating checkout session:', error.response?.data || error.message);
       throw new Error('Could not generate checkout session');
     }
-
-    return checkoutSessionUrl;
   }
 
-  async CheckoutSessionCompleteHandler(
-    checkoutSessionId: string,
+  async handleRelayCheckout(
     pubkey: string,
     planId: string,
+    checkoutSessionId: string,
     totalAmount: number,
     unit: string,
   ) {
-    const config = await this.configService.getNip11();
+    const plan = await this.getSubscriptionPlan(planId);
+    const now = Math.floor(Date.now() / 1000);
 
-    const isSubscriptionPlanExist = config && config.fees && (config.fees.subscription ?? []).length > 0;
-    if (!isSubscriptionPlanExist) {
-      throw new NotFoundException('subscription plan not found.');
-    }
-
-    const subscription = config.fees?.subscription?.find((s) => s.period === Number(planId));
-
-    if (!subscription) {
-      throw new NotFoundException('subscription plan not found.');
-    }
-
-    const a = await this.subscriptionRepository.findOne({
-      where: {
-        subscriber: pubkey,
-        status: SubscriptionStatusEnum.ACTIVE,
-      },
+    let subscription = await this.subscriptionRepository.findOne({
+      where: { subscriber: pubkey, status: SubscriptionStatusEnum.ACTIVE },
     });
 
-    if (a) {
-      const period = subscription.period;
-      a.endDate = a.endDate + period;
-
-      await this.subscriptionRepository.save(a);
+    if (subscription) {
+      subscription.endDate += plan.period;
     } else {
-      const startDate = Math.floor(Date.now() / 1000); // sec
-      const period = subscription.period; // sec
-      const endDate = startDate + period;
-
-      const sub = this.subscriptionRepository.create({
+      subscription = this.subscriptionRepository.create({
         subscriber: pubkey,
-        startDate,
-        endDate,
+        startDate: now,
+        endDate: now + plan.period,
         status: SubscriptionStatusEnum.ACTIVE,
       });
-
-      await this.redis.call('CF.ADD', 'IMMO_WHITE_LIST', pubkey);
-
-      await this.subscriptionRepository.save(sub);
+      await this.addToWhitelist(pubkey);
     }
 
-    await this.InvoiceService.create({
-      status: InvoiceStatusEnum.PAID,
-      checkoutSessionId,
-      totalAmount,
-      unit,
-    });
+    await this.subscriptionRepository.save(subscription);
+    await this.createInvoiceRecord(checkoutSessionId, totalAmount, unit);
+    await this.notifyUser(SubscriptionTemplate.welcomeRelay().content, pubkey);
+  }
 
-    await this.nostrNotification.sendNotification(
-      `Welcome to Jellyfish – Premium Access Activated!
+  async handleNip05Checkout(
+    pubkey: string,
+    name: string,
+    domainId: string,
+    checkoutSessionId: string,
+    totalAmount: number,
+    unit: string,
+  ) {
+    const service = await this.serviceRegistry.findOneByType(ServiceType.NIP05);
+    if (!service) throw new InternalServerErrorException('NIP-05 service not available');
 
-Thank you for subscribing to Jellyfish ecosystem! 🎉 Your premium access is now active, and you can start relaying messages with enhanced reliability, speed, and privacy.
-
-Here’s what you need to get started:
-✅ Relay URL: wss://jellyfish.land
-✅ Support & Updates: Follow us on Nostr: @nostr:npub1hu47u55pzjw8cdg0t5f2uvh4znrcvnl3pqz3st6p0pfcctzzzqrsplc46u
-✅ Need help? Reach out at hi@dezh.tech.
-
-Stay Immortal!🪼
-
-Best,
-Jellyfish Team`,
-      pubkey,
+    this.seasnailClient.setUrl(service.url);
+    const res = await lastValueFrom(
+      this.seasnailClient.identifierServiceClient.registerIdentifier({ domainId, name, user: pubkey, expireAt: 0 }),
     );
+
+    await this.createInvoiceRecord(checkoutSessionId, totalAmount, unit);
+    await this.notifyUser(SubscriptionTemplate.welcomeNip05(res.fullIdentifier).content, pubkey);
   }
 
   async seedRedis() {
@@ -253,37 +258,9 @@ Jellyfish Team`,
             status: SubscriptionStatusEnum.EXPIRED,
           });
 
-          await this.nostrNotification.sendNotification(
-            `Your Subscription to Jellyfish Has Expired
-
-Your subscription to Jellyfish ecosystem has expired. We'd love to keep you connected! To continue enjoying reliable and fast relaying, please renew your subscription.
-
-🔄 Renew Now: https://jellyfish.land/relay
-🚀 Relay URL: wss://jellyfish.land (Access will be restricted until renewal)
-💬 Need help? Contact us at hi@dezh.tech
-
-Stay Immortal🪼, We hope to see you back soon!
-
-Best,
-Jellyfish Team`,
-            s.subscriber,
-          );
+          await this.notifyUser(SubscriptionTemplate.expired().content, s.subscriber);
         } else if (daysBeforeExpiration === 5 || daysBeforeExpiration === 1) {
-          await this.nostrNotification.sendNotification(
-            `Reminder: Your Jellyfish Subscription Expires in ${daysBeforeExpiration} Day${daysBeforeExpiration > 1 ? 's' : ''}
-
-Your subscription to Jellyfish ecosystem will expire in **${daysBeforeExpiration} day${daysBeforeExpiration > 1 ? 's' : ''}**. To avoid any interruptions, renew your subscription today!
-
-🔄 Renew Now: https://jellyfish.land/relay
-🚀 Relay URL: wss://jellyfish.land
-💬 Need help? Contact us at hi@dezh.tech
-
-Stay Immortal!🪼
-
-Best,
-Jellyfish Team`,
-            s.subscriber,
-          );
+          await this.notifyUser(SubscriptionTemplate.reminder(daysBeforeExpiration).content, s.subscriber);
         }
       }
 
