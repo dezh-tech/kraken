@@ -20,6 +20,7 @@ export enum ServiceTypeEnum {
 
 export interface RegisterServiceRequest {
   port: string;
+  url: string;
   heartbeatDurationInSec: number;
   type: ServiceTypeEnum;
   region: string;
