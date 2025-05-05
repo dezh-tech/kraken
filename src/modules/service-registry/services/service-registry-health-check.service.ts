@@ -1,6 +1,6 @@
 import type { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Injectable, Logger } from '@nestjs/common';
-import { lastValueFrom } from 'rxjs';
+import { catchError, lastValueFrom, timeout } from 'rxjs';
 
 import { WorkersGrpcClient } from '../../../../src/modules/grpc/immortal-grpc.client';
 import type { ServiceRegistryEntity } from '../entities/service-registry.entity';
@@ -75,6 +75,8 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
   }
 
   private async performHealthCheck(service: ServiceRegistryEntity): Promise<void> {
+    const TIMEOUT_MS = 5000; // e.g. 5 seconds
+
     try {
       this.logger.debug(`Performing health check for service: ${service.type} (ID: ${service._id})...`);
 
@@ -82,7 +84,14 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
 
       this.immortalGrpcClient.setUrl(service.url);
 
-      const res = await lastValueFrom(this.immortalGrpcClient.serviceClient.status({}));
+      const res = await lastValueFrom(
+        this.immortalGrpcClient.serviceClient.status({}).pipe(
+          timeout(TIMEOUT_MS),
+          catchError((err) => {
+            throw new Error(`Health check timed out or failed: ${err.message}`);
+          }),
+        ),
+      );
 
       isHealthy = res.services.every((s) => s.status === Status.CONNECTED);
       res.services.forEach((s) => console.log(s.status));
@@ -92,7 +101,6 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
         status: isHealthy ? ServiceStatus.ACTIVE : ServiceStatus.UN_HEALTHY,
       });
 
-      // TODO ::: send notification
       this.logger.log(
         `Health check result for service: ${service.type} (ID: ${service._id}): ${isHealthy ? 'HEALTHY' : 'UNHEALTHY'}`,
       );
