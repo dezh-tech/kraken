@@ -77,15 +77,15 @@ export class SubscriptionsController {
           object.amount,
           object.target_currency,
         );
+      } else {
+        await this.subscriptionService.handleRelayCheckout(
+          object.id,
+          metadata.pubkey,
+          metadata.planId,
+          object.amount,
+          object.target_currency,
+        );
       }
-
-      await this.subscriptionService.handleRelayCheckout(
-        object.id,
-        metadata.pubkey,
-        metadata.planId,
-        object.amount,
-        object.target_currency,
-      );
     }
 
     return { success: true };

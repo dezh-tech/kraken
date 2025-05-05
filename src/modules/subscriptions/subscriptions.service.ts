@@ -50,6 +50,8 @@ export class SubscriptionsService {
       hexToBytes(this.apiConfig.getNostrConfig.privateKey),
       this.apiConfig.getNostrConfig.relays,
     );
+
+    this.seedRedis();
   }
 
   private async getSubscriptionPlan(planId: string) {
@@ -146,6 +148,8 @@ export class SubscriptionsService {
     await this.subscriptionRepository.save(subscription);
     await this.createInvoiceRecord(checkoutSessionId, totalAmount, unit);
     await this.notifyUser(SubscriptionTemplate.welcomeRelay().content, pubkey);
+
+    return true;
   }
 
   async handleNip05Checkout(
@@ -166,6 +170,8 @@ export class SubscriptionsService {
 
     await this.createInvoiceRecord(checkoutSessionId, totalAmount, unit);
     await this.notifyUser(SubscriptionTemplate.welcomeNip05(res.fullIdentifier).content, pubkey);
+
+    return true;
   }
 
   async seedRedis() {
