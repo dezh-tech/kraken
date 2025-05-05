@@ -75,7 +75,7 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
   }
 
   private async performHealthCheck(service: ServiceRegistryEntity): Promise<void> {
-    const TIMEOUT_MS = 5000; // e.g. 5 seconds
+    const TIMEOUT_MS = 10000;
 
     try {
       this.logger.debug(`Performing health check for service: ${service.type} (ID: ${service._id})...`);

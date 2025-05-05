@@ -118,9 +118,9 @@ export class SubscriptionsService {
   }
 
   async handleRelayCheckout(
+    checkoutSessionId: string,
     pubkey: string,
     planId: string,
-    checkoutSessionId: string,
     totalAmount: number,
     unit: string,
   ) {
@@ -149,10 +149,10 @@ export class SubscriptionsService {
   }
 
   async handleNip05Checkout(
+    checkoutSessionId: string,
     pubkey: string,
     name: string,
     domainId: string,
-    checkoutSessionId: string,
     totalAmount: number,
     unit: string,
   ) {
