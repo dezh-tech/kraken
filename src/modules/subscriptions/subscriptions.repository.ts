@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { DeepPartial } from 'typeorm';
 import { MongoRepository } from 'typeorm';
+import type { MongoFindManyOptions } from 'typeorm/find-options/mongodb/MongoFindManyOptions';
+import type { MongoFindOneOptions } from 'typeorm/find-options/mongodb/MongoFindOneOptions';
 
 import { SubscriptionEntity } from './entities/subscription.entity';
-import { MongoFindOneOptions } from 'typeorm/find-options/mongodb/MongoFindOneOptions';
-import { MongoFindManyOptions } from 'typeorm/find-options/mongodb/MongoFindManyOptions';
 
 @Injectable()
 export class SubscriptionRepository {

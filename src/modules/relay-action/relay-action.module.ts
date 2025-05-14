@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+
+import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { ImportExportRelayActionService } from './import-export.service';
 import { RelayActionController } from './relay-action.controller';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 
 @Module({
   imports: [SubscriptionsModule],

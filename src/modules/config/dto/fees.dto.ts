@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+
 import { NumberFieldOptional, StringFieldOptional } from '../../../../src/decorators';
 
 export class SubscriptionDto {

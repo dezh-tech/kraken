@@ -3,10 +3,11 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
 export class Nip98AuthGuard extends AuthGuard('nip98') {
-  handleRequest(err: any, user: any) {
+  handleRequest(err: unknown, user: unknown) {
     if (err || !user) {
       throw err || new UnauthorizedException();
     }
+
     return user;
   }
 }

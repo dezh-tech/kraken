@@ -1,8 +1,9 @@
 import { Controller, Get, Req, Res } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { ConfigService } from '../../../src/modules/config/config.service';
-import { Nip11DTO } from '../../modules/config/dto/nip11.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
+
+import { ConfigService } from '../../../src/modules/config/config.service';
+import type { Nip11DTO } from '../../modules/config/dto/nip11.dto';
 
 @Controller()
 @ApiTags('NIP-11')
@@ -21,7 +22,7 @@ export class Nip11Controller {
 
     const { id, createdAt, updatedAt, url, ...config } = this.CONFIG!;
 
-    if (req.headers['accept'] === 'application/nostr+json') {
+    if (req.headers.accept === 'application/nostr+json') {
       res.json(config);
     } else {
       res.type('text/html').send(this.generateHtmlResponse(config));
@@ -30,7 +31,7 @@ export class Nip11Controller {
 
   private async setConfig(): Promise<void> {
     const config = await this.configService.getNip11();
-    this.CONFIG = config?.toDto() as Nip11DTO;
+    this.CONFIG = config.toDto();
   }
 
   private initializeConfigListener(): void {
@@ -47,6 +48,7 @@ export class Nip11Controller {
     const tableRows = Object.entries(config)
       .map(([key, value]) => {
         const displayValue = typeof value === 'object' && value !== null ? JSON.stringify(value, null, 2) : value;
+
         return `
           <tr>
             <td><strong>${key}</strong></td>

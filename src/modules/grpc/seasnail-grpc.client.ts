@@ -1,19 +1,28 @@
 import path from 'node:path';
+
 import { ChannelCredentials } from '@grpc/grpc-js';
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ClientGrpc, ClientOptions, ClientProxyFactory, Transport } from '@nestjs/microservices';
-import { IDENTIFIER_SERVICE_NAME, SEASNAIL_V1_PACKAGE_NAME, IdentifierServiceClient } from './gen/ts/identifier';
-import { DOMAIN_SERVICE_NAME, DomainServiceClient, } from './gen/ts/domain';
+import type { OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import type { ClientGrpc, ClientOptions } from '@nestjs/microservices';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+
+import type { DomainServiceClient } from './gen/ts/domain';
+import { DOMAIN_SERVICE_NAME } from './gen/ts/domain';
+import type { IdentifierServiceClient } from './gen/ts/identifier';
+import { IDENTIFIER_SERVICE_NAME, SEASNAIL_V1_PACKAGE_NAME } from './gen/ts/identifier';
 
 @Injectable()
 export class SeasnailGrpcClient implements OnModuleInit {
   static instance: SeasnailGrpcClient;
 
   private clientGrpc: ClientGrpc;
+
   public identifierServiceClient: IdentifierServiceClient;
+
   public domainServiceClient: DomainServiceClient;
 
   private isSecure = false;
+
   private url = '';
 
   constructor() {
@@ -49,6 +58,5 @@ export class SeasnailGrpcClient implements OnModuleInit {
   onModuleInit(): void {
     this.identifierServiceClient = this.clientGrpc.getService<IdentifierServiceClient>(IDENTIFIER_SERVICE_NAME);
     this.domainServiceClient = this.clientGrpc.getService<DomainServiceClient>(DOMAIN_SERVICE_NAME);
-
   }
 }

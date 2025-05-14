@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsInt, IsOptional } from 'class-validator';
-
-import { AbstractDto } from '../../../common/dto/abstract.dto';
+import { IsBoolean, IsInt } from 'class-validator';
 
 export class LimitationDto {
   @ApiProperty()

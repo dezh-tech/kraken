@@ -1,15 +1,15 @@
 import EventEmitter from 'node:events';
 
 import { Injectable } from '@nestjs/common';
+import { WorkersGrpcClient } from 'src/modules/grpc/immortal-grpc.client';
+import { ServerType } from 'typeorm';
 
 import { ApiConfigService } from '../../../../src/shared/services/api-config.service';
 import type RegisterServiceRegistryDto from '../dtos/service-registry-register.dto';
 import { ServiceRegistryEntity } from '../entities/service-registry.entity';
-import { ServiceRegistryRepository } from '../service-registry.repository';
-import { WorkersGrpcClient } from 'src/modules/grpc/immortal-grpc.client';
-import { ServerType } from 'typeorm';
-import { ServiceType } from '../enums/service-types.enum';
 import { ServiceStatus } from '../enums/service-status.enum';
+import type { ServiceType } from '../enums/service-types.enum';
+import { ServiceRegistryRepository } from '../service-registry.repository';
 
 @Injectable()
 // eslint-disable-next-line unicorn/prefer-event-target

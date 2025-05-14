@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { ITransporter } from '../transporter.interface';
+
+import type { ITransporter } from '../transporter.interface';
 
 export class TelegramTransporter implements ITransporter {
   constructor(private readonly botToken: string) {}

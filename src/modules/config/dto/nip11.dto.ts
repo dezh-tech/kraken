@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsOptional, IsString } from 'class-validator';
+
 import { AbstractDto } from '../../../common/dto/abstract.dto';
 import type { Nip11Entity } from '../entities/nip11.entity';
-import { RetentionDto } from './retention.dto';
-import { LimitationDto } from './limitation.dto';
 import { FeesDto } from './fees.dto';
+import { LimitationDto } from './limitation.dto';
+import { RetentionDto } from './retention.dto';
 
 export class Nip11DTO extends AbstractDto {
   @ApiProperty()
@@ -88,6 +89,7 @@ export class Nip11DTO extends AbstractDto {
   @IsOptional()
   limitation?: LimitationDto;
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   constructor(e: Nip11Entity) {
     super(e);
 

@@ -1,18 +1,24 @@
-import { Relay, nip17, finalizeEvent, nip59, nip04, kinds } from 'nostr-tools';
-import { ITransporter } from '../transporter.interface';
-import { hexToBytes } from '@noble/hashes/utils';
 import { webcrypto } from 'node:crypto';
 
+import { hexToBytes } from '@noble/hashes/utils';
+import { finalizeEvent, kinds, nip04, nip17, nip59, Relay } from 'nostr-tools';
+
+import type { ITransporter } from '../transporter.interface';
+
 const semver = require('semver');
+
 const nodeVersion = process.version;
+
 if (semver.lt(nodeVersion, '20.0.0')) {
   // polyfills for node 18
-  global.crypto = require('crypto');
+  global.crypto = require('node:crypto');
   global.WebSocket = require('isomorphic-ws');
 } else {
   // polyfills for node 20
-  // @ts-ignore
-  if (!globalThis.crypto) globalThis.crypto = webcrypto;
+  // @ts-expect-error
+  if (!globalThis.crypto) {
+    globalThis.crypto = webcrypto;
+  }
 
   global.WebSocket = require('isomorphic-ws');
 }
@@ -27,33 +33,34 @@ export class NostrTransporter implements ITransporter {
     const createdAt = Math.floor(Date.now() / 1000);
     const cipherText = await nip04.encrypt(this.privateKey, recipient, message);
 
-    let event = {
+    const event = {
       kind: kinds.EncryptedDirectMessage,
       created_at: createdAt,
-      tags: [[ "p", recipient ]],
+      tags: [['p', recipient]],
       content: cipherText,
-  };
+    };
 
     const signedEvent = finalizeEvent(event, this.privateKey);
 
     let successfulRelays = 0;
+
     for (const relayUrl of this.relays) {
-      let relay: Relay
+      let relay: Relay;
+
       try {
-      relay = await Relay.connect(relayUrl);
+        relay = await Relay.connect(relayUrl);
 
         await relay.publish(signedEvent);
         successfulRelays++;
         console.info(`Publish event to ${relayUrl} successfully.`);
-      } catch (error) {
+      } catch {
         console.error(`Failed to publish event to ${relayUrl}:`);
-
       }
     }
 
     // Report success or failure
     if (successfulRelays === 0) {
-      throw Error('Failed to connect to any relays.');
+      throw new Error('Failed to connect to any relays.');
     } else {
       console.info(`Publish event to ${successfulRelays} relays`);
     }

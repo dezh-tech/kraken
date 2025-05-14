@@ -1,9 +1,14 @@
+import type { Metadata } from '@grpc/grpc-js';
 import { Controller, UseInterceptors } from '@nestjs/common';
-
 import { GrpcInvalidArgumentException, GrpcToHttpInterceptor } from 'nestjs-grpc-exceptions';
+
+import type {
+  GetParametersRequest,
+  GetParametersResponse,
+  ParametersController,
+} from '../../../../src/modules/grpc/gen/ts/config';
+import { ParametersControllerMethods } from '../../../../src/modules/grpc/gen/ts/config';
 import { ConfigService } from '../config.service';
-import { Metadata } from '@grpc/grpc-js';
-import { GetParametersRequest, GetParametersResponse, ParametersController, ParametersControllerMethods } from '../../../../src/modules/grpc/gen/ts/config';
 
 @Controller()
 @ParametersControllerMethods()
@@ -12,10 +17,12 @@ export class ConfigGrpcController implements ParametersController {
   constructor(private readonly configService: ConfigService) {}
 
   async getParameters(_request: GetParametersRequest, _metadata?: Metadata): Promise<GetParametersResponse> {
-    const token = _metadata?.get('x-identifier')?.[0] as string | undefined;
+    const token = _metadata?.get('x-identifier')[0] as string | undefined;
+
     if (!token) {
       throw new GrpcInvalidArgumentException("input 'x-identifier' is not valid.");
     }
+
     const { url, limitation: limitations } = await this.configService.getNip11();
 
     return {

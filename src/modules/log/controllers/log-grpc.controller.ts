@@ -1,10 +1,11 @@
 import type { Metadata } from '@grpc/grpc-js';
 import { Controller } from '@nestjs/common';
 
+import type { AddLogRequest, AddLogResponse, LogController } from '../../../../src/modules/grpc/gen/ts/log';
+import { LogControllerMethods } from '../../../../src/modules/grpc/gen/ts/log';
 import ServiceRegistryService from '../../../../src/modules/service-registry/services/service-registry.service';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { LogService } from '../log.service';
-import { AddLogRequest, AddLogResponse, LogController, LogControllerMethods } from '../../../../src/modules/grpc/gen/ts/log';
 
 @Controller()
 @LogControllerMethods()

@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ITransporter } from '../notification/transporter.interface';
-import Redis from 'ioredis';
-import { hexToBytes } from '@noble/hashes/utils';
 import { InjectRedis } from '@nestjs-modules/ioredis';
-import { ApiConfigService } from '../../../src/shared/services/api-config.service';
-import { TransporterService } from '../notification/transporter-factory.service';
+import { hexToBytes } from '@noble/hashes/utils';
+import Redis from 'ioredis';
 import { SimplePool } from 'nostr-tools';
+
+import { ApiConfigService } from '../../../src/shared/services/api-config.service';
+import type { ITransporter } from '../notification/transporter.interface';
+import { TransporterService } from '../notification/transporter-factory.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 
 @Injectable()
@@ -54,7 +55,7 @@ Jellyfish Team🪼`,
         for await (const e of events) {
           try {
             await Promise.any(pool.publish([this.apiConfig.getNostrConfig.mainRelay], e));
-          } catch (error) {}
+          } catch {}
         }
 
         const collectedFromRelays = relays.map((r) => `- ${r}`).join('\n');

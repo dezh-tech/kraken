@@ -6,10 +6,10 @@ import { ApiConfigService } from '../../shared/services/api-config.service';
 import { UserModule } from '../users/user.module';
 import AuthController from './auth.controller';
 import AuthService from './auth.service';
+import { Nip98AuthGuard } from './guards/nip98-auth.guard';
 import JwtStrategy from './strategies/jwt.strategy';
 import LocalStrategy from './strategies/local.strategy';
 import { Nip98Strategy } from './strategies/nip-98.strategy';
-import { Nip98AuthGuard } from './guards/nip98-auth.guard';
 
 @Module({
   imports: [
@@ -24,6 +24,6 @@ import { Nip98AuthGuard } from './guards/nip98-auth.guard';
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy, Nip98Strategy, Nip98AuthGuard],
   controllers: [AuthController],
-  exports: [Nip98AuthGuard,Nip98Strategy],
+  exports: [Nip98AuthGuard, Nip98Strategy],
 })
 export default class AuthModule {}

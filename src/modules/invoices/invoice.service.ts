@@ -1,7 +1,8 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+
+import type { CreateInvoice } from './dto/create-invoice.dto';
+import type { UpdateInvoice } from './dto/update-invoice.dto';
 import { InvoiceRepository } from './invoice.repository';
-import { CreateInvoice } from './dto/create-invoice.dto';
-import { UpdateInvoice } from './dto/update-invoice.dto';
 
 @Injectable()
 export class InvoiceService {
@@ -9,6 +10,7 @@ export class InvoiceService {
 
   async create(prop: CreateInvoice) {
     const inv = this.repo.create(prop);
+
     return this.repo.save(inv);
   }
 

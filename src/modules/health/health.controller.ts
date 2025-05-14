@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { HealthCheck, HealthCheckService, TypeOrmHealthIndicator,  } from '@nestjs/terminus';
+import { HealthCheck, HealthCheckService, TypeOrmHealthIndicator } from '@nestjs/terminus';
 
 import JwtAuthGuard from '../auth/guards/jwt-auth.guard';
 
@@ -20,7 +20,7 @@ export default class HealthController {
   @HealthCheck()
   async check() {
     return {
-      health: await this.health.check([async () => this.typeOrm.pingCheck('TypeOrm',{timeout:2000})]),
+      health: await this.health.check([async () => this.typeOrm.pingCheck('TypeOrm', { timeout: 2000 })]),
       uptime: this.getFormattedUptime(),
     };
   }

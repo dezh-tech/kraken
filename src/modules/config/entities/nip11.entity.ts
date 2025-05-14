@@ -2,9 +2,9 @@ import { Column, Entity } from 'typeorm';
 
 import { AbstractEntity } from '../../../common/abstract.entity';
 import { Nip11DTO } from '../dto/nip11.dto';
-import { FeesEntity } from './fees.entity';
-import { RetentionEntity } from './retention.entity';
-import { LimitationEntity } from './limitaion.entity';
+import type { FeesEntity } from './fees.entity';
+import type { LimitationEntity } from './limitaion.entity';
+import type { RetentionEntity } from './retention.entity';
 
 @Entity('config')
 export class Nip11Entity extends AbstractEntity<Nip11DTO> {

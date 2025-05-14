@@ -1,18 +1,24 @@
 import path from 'node:path';
-import { ChannelCredentials } from '@grpc/grpc-js';
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ClientGrpc, ClientOptions, ClientProxyFactory, Transport } from '@nestjs/microservices';
-import { HEALTH_SERVICE_NAME, HealthServiceClient, RELAY_V1_PACKAGE_NAME } from './gen/ts/relay-health';
 
+import { ChannelCredentials } from '@grpc/grpc-js';
+import type { OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import type { ClientGrpc, ClientOptions } from '@nestjs/microservices';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+
+import type { HealthServiceClient } from './gen/ts/relay-health';
+import { HEALTH_SERVICE_NAME, RELAY_V1_PACKAGE_NAME } from './gen/ts/relay-health';
 
 @Injectable()
 export class WorkersGrpcClient implements OnModuleInit {
   static instance: WorkersGrpcClient;
 
   private clientGrpc: ClientGrpc;
+
   public serviceClient: HealthServiceClient;
 
   private isSecure = false;
+
   private url = '';
 
   constructor() {

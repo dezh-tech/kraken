@@ -1,4 +1,4 @@
-import { ITransporter } from './transporter.interface';
+import type { ITransporter } from './transporter.interface';
 import { NostrTransporter } from './transporters/nostr.transporter';
 import { TelegramTransporter } from './transporters/telegram.transporter';
 

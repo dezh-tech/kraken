@@ -9,10 +9,10 @@ import compression from 'compression';
 import morgan from 'morgan';
 
 import { AppModule } from './app.module';
+import { MANAGER_V1_PACKAGE_NAME } from './modules/grpc/gen/ts/config';
 import { setupSwagger } from './setup-swagger';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { SharedModule } from './shared/shared.module';
-import { MANAGER_V1_PACKAGE_NAME } from './modules/grpc/gen/ts/config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(), {

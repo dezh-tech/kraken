@@ -15,15 +15,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
-
-import { ApiConfigService } from '../../../src/shared/services/api-config.service';
-import { SubscriptionGenerateCheckoutSessionDto } from './dto/subscription-generate-checkout-session.dto';
-import { SubscriptionsService } from './subscriptions.service';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
-import JwtAuthGuard from '../auth/guards/jwt-auth.guard';
-import { Nip98AuthGuard } from '../auth/guards/nip98-auth.guard';
 import { Request } from 'express';
 import { ObjectId } from 'typeorm';
+
+import { ApiConfigService } from '../../../src/shared/services/api-config.service';
+import JwtAuthGuard from '../auth/guards/jwt-auth.guard';
+import { Nip98AuthGuard } from '../auth/guards/nip98-auth.guard';
+import { SubscriptionGenerateCheckoutSessionDto } from './dto/subscription-generate-checkout-session.dto';
+import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { SubscriptionsService } from './subscriptions.service';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
@@ -39,11 +39,7 @@ export class SubscriptionsController {
       throw new BadRequestException('invalid npub');
     }
 
-    const data = await this.subscriptionService.generateCheckoutSession(
-      args.subscriber as `npub1${string}`,
-      args.planId,
-    );
-    return data;
+    return await this.subscriptionService.generateCheckoutSession(args.subscriber as `npub1${string}`, args.planId);
   }
 
   @Post('webhook')
@@ -68,24 +64,22 @@ export class SubscriptionsController {
       const object = parsedBody.data.object;
       const metadata = object.metadata;
 
-      if (metadata.service === 'seasnail') {
-        await this.subscriptionService.handleNip05Checkout(
-          object.id,
-          metadata.pubkey,
-          metadata.name,
-          metadata.domainId,
-          object.amount,
-          object.target_currency,
-        );
-      } else {
-        await this.subscriptionService.handleRelayCheckout(
-          object.id,
-          metadata.pubkey,
-          metadata.planId,
-          object.amount,
-          object.target_currency,
-        );
-      }
+      await (metadata.service === 'seasnail'
+        ? this.subscriptionService.handleNip05Checkout(
+            object.id,
+            metadata.pubkey,
+            metadata.cname,
+            metadata.domainId,
+            object.amount,
+            object.target_currency,
+          )
+        : this.subscriptionService.handleRelayCheckout(
+            object.id,
+            metadata.pubkey,
+            metadata.planId,
+            object.amount,
+            object.target_currency,
+          ));
     }
 
     return { success: true };
@@ -129,7 +123,7 @@ export class SubscriptionsController {
   @Get('remaining')
   @UseGuards(Nip98AuthGuard)
   remaining(@Req() req: Request) {
-    return this.subscriptionService.getRemainingOfSubscription((req.user as { pubkey: string })?.pubkey);
+    return this.subscriptionService.getRemainingOfSubscription((req.user as { pubkey: string }).pubkey);
   }
 
   @UseGuards(JwtAuthGuard)

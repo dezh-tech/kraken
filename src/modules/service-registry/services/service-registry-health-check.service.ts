@@ -2,13 +2,13 @@ import type { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { catchError, lastValueFrom, timeout } from 'rxjs';
 
+import { Status } from '../../../../src/modules/grpc/gen/ts/relay-health';
 import { WorkersGrpcClient } from '../../../../src/modules/grpc/immortal-grpc.client';
 import type { ServiceRegistryEntity } from '../entities/service-registry.entity';
 import { ServiceStatus } from '../enums/service-status.enum';
 import { ServiceType } from '../enums/service-types.enum';
 import { ServiceRegistryRepository } from '../service-registry.repository';
 import ServiceRegistryService from './service-registry.service';
-import { Status } from '../../../../src/modules/grpc/gen/ts/relay-health';
 
 @Injectable()
 export default class ServiceRegistryHealthCheckService implements OnModuleInit, OnModuleDestroy {
@@ -75,7 +75,7 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
   }
 
   private async performHealthCheck(service: ServiceRegistryEntity): Promise<void> {
-    const TIMEOUT_MS = 10000;
+    const TIMEOUT_MS = 10_000;
 
     try {
       this.logger.debug(`Performing health check for service: ${service.type} (ID: ${service._id})...`);
@@ -94,7 +94,10 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
       );
 
       isHealthy = res.services.every((s) => s.status === Status.CONNECTED);
-      res.services.forEach((s) => console.log(s.status));
+
+      for (const s of res.services) {
+        console.log(s.status);
+      }
 
       service.assign({
         lastHealthCheck: Date.now(),
@@ -116,6 +119,7 @@ export default class ServiceRegistryHealthCheckService implements OnModuleInit, 
       });
 
       const interval = this.serviceIntervals.get(String(service._id));
+
       if (interval) {
         clearInterval(interval);
         this.serviceIntervals.delete(String(service._id));

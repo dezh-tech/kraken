@@ -5,36 +5,37 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRedis } from '@nestjs-modules/ioredis';
+import { hexToBytes } from '@noble/hashes/utils';
 import axios from 'axios';
 import Redis from 'ioredis';
-import { hexToBytes } from '@noble/hashes/utils';
+import { nip19 } from 'nostr-tools';
+import { lastValueFrom } from 'rxjs';
+import { ObjectId } from 'typeorm';
+import type { MongoFindOneOptions } from 'typeorm/find-options/mongodb/MongoFindOneOptions';
 
 import { ApiConfigService } from '../../../src/shared/services/api-config.service';
 import { ConfigService } from '../config/config.service';
-import { SubscriptionRepository } from './subscriptions.repository';
-import { ObjectId } from 'typeorm';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
-import { SubscriptionStatusEnum } from './enums/subscription-status.enum';
-import { InvoiceService } from '../invoices/invoice.service';
-import { InvoiceStatusEnum } from '../invoices/enums/invoice-status.enum';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { nip19 } from 'nostr-tools';
-import { TransporterService } from '../notification/transporter-factory.service';
-import { ITransporter } from '../notification/transporter.interface';
-import { SubscriptionEntity } from './entities/subscription.entity';
-import { MongoFindOneOptions } from 'typeorm/find-options/mongodb/MongoFindOneOptions';
 import { SeasnailGrpcClient } from '../grpc/seasnail-grpc.client';
-import { lastValueFrom } from 'rxjs';
-import ServiceRegistryService from '../service-registry/services/service-registry.service';
+import { InvoiceStatusEnum } from '../invoices/enums/invoice-status.enum';
+import { InvoiceService } from '../invoices/invoice.service';
+import type { ITransporter } from '../notification/transporter.interface';
+import { TransporterService } from '../notification/transporter-factory.service';
 import { ServiceType } from '../service-registry/enums/service-types.enum';
-import { template } from 'lodash';
+import ServiceRegistryService from '../service-registry/services/service-registry.service';
+import type { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import type { SubscriptionEntity } from './entities/subscription.entity';
+import { SubscriptionStatusEnum } from './enums/subscription-status.enum';
 import { SubscriptionTemplate } from './notify-template';
+import { SubscriptionRepository } from './subscriptions.repository';
 
 @Injectable()
 export class SubscriptionsService {
   private readonly logger = new Logger(SubscriptionsService.name);
+
   private readonly apiUrl = 'https://api.tryspeed.com/checkout-sessions';
+
   private readonly nostrNotification: ITransporter;
 
   constructor(
@@ -51,14 +52,18 @@ export class SubscriptionsService {
       this.apiConfig.getNostrConfig.relays,
     );
 
-    this.seedRedis();
+    void this.seedRedis();
   }
 
   private async getSubscriptionPlan(planId: string) {
     const config = await this.configService.getNip11();
-    const plans = config?.fees?.subscription ?? [];
+    const plans = config.fees?.subscription ?? [];
     const plan = plans.find((p) => p.period === Number(planId));
-    if (!plan) throw new NotFoundException('subscription plan not found.');
+
+    if (!plan) {
+      throw new NotFoundException('subscription plan not found.');
+    }
+
     return plan;
   }
 
@@ -85,6 +90,7 @@ export class SubscriptionsService {
 
   async generateCheckoutSession(npub: `npub1${string}`, planId: string) {
     let pubkey: string;
+
     try {
       pubkey = nip19.decode<'npub'>(npub).data;
     } catch {
@@ -112,9 +118,11 @@ export class SubscriptionsService {
 
     try {
       const response = await axios.post(this.apiUrl, data, { headers });
+
       return response.data.url;
     } catch (error) {
       this.logger.error('Error generating checkout session:', error.response?.data || error.message);
+
       throw new Error('Could not generate checkout session');
     }
   }
@@ -161,7 +169,10 @@ export class SubscriptionsService {
     unit: string,
   ) {
     const service = await this.serviceRegistry.findOneByType(ServiceType.NIP05);
-    if (!service) throw new InternalServerErrorException('NIP-05 service not available');
+
+    if (!service) {
+      throw new InternalServerErrorException('NIP-05 service not available');
+    }
 
     this.seasnailClient.setUrl(service.url);
     const res = await lastValueFrom(
@@ -200,8 +211,6 @@ export class SubscriptionsService {
       const results = await pipeline.exec();
 
       this.logger.log(`Pipeline executed with ${results?.length} commands.`);
-
-      return;
     } catch (error) {
       this.logger.error('An error occurred during seedRedis execution.', (error as { stack: string }).stack);
     }
@@ -248,6 +257,7 @@ export class SubscriptionsService {
 
       if (activeSubscriptions.length === 0) {
         this.logger.log('No active subscriptions.');
+
         return;
       }
 

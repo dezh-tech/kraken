@@ -1,15 +1,17 @@
-import type { ServerUnaryCall, Metadata } from '@grpc/grpc-js';
+import type { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
 import { Controller } from '@nestjs/common';
 
-import { ApiConfigService } from '../../../../src/shared/services/api-config.service';
-import { ServiceType } from '../enums/service-types.enum';
-import ServiceRegistryService from '../services/service-registry.service';
-import {
+import type {
   RegisterServiceRequest,
   RegisterServiceResponse,
+} from '../../../../src/modules/grpc/gen/ts/service_registry';
+import {
   ServiceRegistryControllerMethods,
   ServiceTypeEnum,
 } from '../../../../src/modules/grpc/gen/ts/service_registry';
+import { ApiConfigService } from '../../../../src/shared/services/api-config.service';
+import { ServiceType } from '../enums/service-types.enum';
+import ServiceRegistryService from '../services/service-registry.service';
 
 @Controller()
 @ServiceRegistryControllerMethods()
@@ -19,10 +21,7 @@ export class ServiceRegistryGrpcController implements ServiceRegistryGrpcControl
     private readonly apiConfig: ApiConfigService,
   ) {}
 
-  async registerService(
-    request: RegisterServiceRequest,
-    _metadata: Metadata,
-  ): Promise<RegisterServiceResponse> {
+  async registerService(request: RegisterServiceRequest, _metadata: Metadata): Promise<RegisterServiceResponse> {
     try {
       const { url, port, heartbeatDurationInSec, type, region } = request;
 
@@ -43,7 +42,7 @@ export class ServiceRegistryGrpcController implements ServiceRegistryGrpcControl
 
       return {
         success: true,
-        token: token,
+        token,
       };
     } catch (error) {
       const err = error as { message: string; stack: string };

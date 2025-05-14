@@ -1,8 +1,9 @@
+import { EventEmitter } from 'node:stream';
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { Nip11Repository } from './repositories/nip11.repository';
 import type { UpdateNip11Dto } from './dto/update-config.dto';
-import { EventEmitter } from 'node:stream';
+import { Nip11Repository } from './repositories/nip11.repository';
 
 @Injectable()
 export class ConfigService extends EventEmitter {

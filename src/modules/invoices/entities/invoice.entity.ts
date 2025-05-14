@@ -1,8 +1,8 @@
 import { Column, Entity } from 'typeorm';
 
 import { AbstractEntity } from '../../../../src/common/abstract.entity';
-import { InvoiceStatusEnum } from '../enums/invoice-status.enum';
 import { InvoiceDto } from '../dto/invoice.dto';
+import { InvoiceStatusEnum } from '../enums/invoice-status.enum';
 
 @Entity('invoices')
 export class InvoiceEntity extends AbstractEntity<InvoiceDto> {

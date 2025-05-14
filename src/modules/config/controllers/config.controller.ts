@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+import JwtAuthGuard from '../../../../src/modules/auth/guards/jwt-auth.guard';
 import { ConfigService } from '../config.service';
 import { UpdateNip11Dto } from '../dto/update-config.dto';
-import JwtAuthGuard from '../../../../src/modules/auth/guards/jwt-auth.guard';
 
 @Controller('config')
 @ApiTags('config')
@@ -23,6 +23,6 @@ export class ServiceConfigController {
   async get() {
     const config = await this.configService.getNip11();
 
-    return config?.toDto();
+    return config.toDto();
   }
 }
