@@ -15,9 +15,8 @@ if (semver.lt(nodeVersion, '20.0.0')) {
   global.WebSocket = require('isomorphic-ws');
 } else {
   // polyfills for node 20
-  // @ts-expect-error
   if (!globalThis.crypto) {
-    globalThis.crypto = webcrypto;
+    globalThis.crypto = webcrypto as unknown as Crypto;
   }
 
   global.WebSocket = require('isomorphic-ws');

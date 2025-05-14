@@ -25,7 +25,7 @@ import {
 import _ from 'lodash';
 
 import { ApiEnumProperty, ApiUUIDProperty } from './property.decorators';
-import { PhoneNumberSerializer, ToArray, ToBoolean, ToLowerCase, ToUpperCase, Trim } from './transform.decorators';
+import {ToArray, ToBoolean, ToLowerCase, ToUpperCase, Trim } from './transform.decorators';
 import { IsPassword, IsPhoneNumber, IsTmpKey } from './validator.decorators';
 
 interface IStringFieldOptions {
@@ -218,23 +218,6 @@ export function EmailFieldOptional(
   return applyDecorators(IsOptional(), EmailField({ required: false, ...options }));
 }
 
-export function PhoneField(
-  options: Omit<ApiPropertyOptions, 'type'> & Partial<{ swagger: boolean }> = {},
-): PropertyDecorator {
-  const decorators = [IsPhoneNumber(), PhoneNumberSerializer()];
-
-  if (options.swagger !== false) {
-    decorators.push(ApiProperty({ type: String, ...options }));
-  }
-
-  return applyDecorators(...decorators);
-}
-
-export function PhoneFieldOptional(
-  options: Omit<ApiPropertyOptions, 'type' | 'required'> & Partial<{ swagger: boolean }> = {},
-): PropertyDecorator {
-  return applyDecorators(IsOptional(), PhoneField({ required: false, ...options }));
-}
 
 export function UUIDField(
   options: Omit<ApiPropertyOptions, 'type' | 'format'> & Partial<{ each: boolean; swagger: boolean }> = {},

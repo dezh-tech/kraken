@@ -10,7 +10,7 @@ import { InjectRedis } from '@nestjs-modules/ioredis';
 import { hexToBytes } from '@noble/hashes/utils';
 import axios from 'axios';
 import Redis from 'ioredis';
-import { nip19 } from 'nostr-tools';
+import { Event, finalizeEvent, kinds, nip19, Relay, SimplePool } from 'nostr-tools';
 import { lastValueFrom } from 'rxjs';
 import { ObjectId } from 'typeorm';
 import type { MongoFindOneOptions } from 'typeorm/find-options/mongodb/MongoFindOneOptions';
@@ -29,6 +29,24 @@ import type { SubscriptionEntity } from './entities/subscription.entity';
 import { SubscriptionStatusEnum } from './enums/subscription-status.enum';
 import { SubscriptionTemplate } from './notify-template';
 import { SubscriptionRepository } from './subscriptions.repository';
+import { webcrypto } from 'node:crypto';
+
+const semver = require('semver');
+
+const nodeVersion = process.version;
+
+if (semver.lt(nodeVersion, '20.0.0')) {
+  // polyfills for node 18
+  global.crypto = require('node:crypto');
+  global.WebSocket = require('isomorphic-ws');
+} else {
+  // polyfills for node 20
+  if (!globalThis.crypto) {
+    globalThis.crypto = webcrypto as unknown as Crypto;
+  }
+
+  global.WebSocket = require('isomorphic-ws');
+}
 
 @Injectable()
 export class SubscriptionsService {
@@ -97,6 +115,71 @@ export class SubscriptionsService {
       throw new BadRequestException('invalid npub');
     }
 
+    const wotConf = this.apiConfig.webOfTrustConfig;
+    const createdAt = Math.floor(Date.now() / 1000);
+
+    const event = {
+      kind: 5312,
+      created_at: createdAt,
+      tags: [
+        ['param', 'target', pubkey],
+        ['param', 'limit', '1'],
+      ],
+      content: '',
+    };
+
+    const signedEvent = finalizeEvent(event, hexToBytes(this.apiConfig.getNostrConfig.privateKey));
+
+    const relay = await Relay.connect(wotConf.relay);
+    await relay.publish(signedEvent);
+
+    await new Promise<void>((resolve, reject) => {
+      const pool = new SimplePool();
+      let resolved = false;
+
+      const timeout = setTimeout(() => {
+        if (!resolved) {
+          resolved = true;
+          pool.close([wotConf.relay]);
+          resolve();
+        }
+      }, 4000); // 4 seconds
+
+      pool.subscribeMany(
+        [wotConf.relay],
+        [
+          {
+            '#p': [signedEvent.pubkey],
+            '#e': [signedEvent.id],
+          },
+        ],
+        {
+          onevent(event: Event) {
+            if (resolved) return;
+
+            try {
+              const { rank } = JSON.parse(event.content)[0] as { rank: string };
+
+              pool.close([wotConf.relay]);
+              clearTimeout(timeout);
+              resolved = true;
+
+              if (parseFloat(rank) < parseFloat(wotConf.relayMinRank)) {
+                reject(new BadRequestException('pubkey rank is too low'));
+              } else {
+                resolve();
+              }
+            } catch (err) {
+              pool.close([wotConf.relay]);
+              clearTimeout(timeout);
+              resolved = true;
+              reject(new Error('Failed to parse rank event'));
+            }
+          },
+        },
+      );
+    });
+
     const subscription = await this.getSubscriptionPlan(planId);
 
     const headers = {
@@ -118,11 +201,9 @@ export class SubscriptionsService {
 
     try {
       const response = await axios.post(this.apiUrl, data, { headers });
-
       return response.data.url;
     } catch (error) {
       this.logger.error('Error generating checkout session:', error.response?.data || error.message);
-
       throw new Error('Could not generate checkout session');
     }
   }

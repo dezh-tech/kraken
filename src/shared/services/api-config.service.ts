@@ -116,6 +116,13 @@ export class ApiConfigService {
     };
   }
 
+  get webOfTrustConfig() {
+    return {
+      relay: this.getString('WOT_RELAY'),
+      relayMinRank: this.getString('WOT_RELAY_MIN_RANK'),
+    };
+  }
+
   get grpcConfig() {
     return {
       port: this.getString('GRPC_PORT'),
