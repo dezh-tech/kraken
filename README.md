@@ -44,3 +44,23 @@ The API and management interface will be available at the configured port. Visit
 ## Contributing
 
 Contributions are welcome! Please submit issues, bug reports, or pull requests to improve Kraken.
+
+## Donation
+
+Donations and financial support for the development process are possible using Bitcoin and Lightning:
+
+**on-chain**:
+
+```
+bc1qfw30k9ztahppatweycnll05rzmrn6u07slehmc
+```
+
+**lightning**: 
+
+```
+donate@dezh.tech
+```
+
+## License
+
+This software is published under the [MIT License](./LICENSE).
