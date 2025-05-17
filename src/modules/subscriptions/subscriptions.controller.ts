@@ -68,7 +68,7 @@ export class SubscriptionsController {
         ? this.subscriptionService.handleNip05Checkout(
             object.id,
             metadata.pubkey,
-            metadata.cname,
+            metadata.name,
             metadata.domainId,
             object.amount,
             object.target_currency,
